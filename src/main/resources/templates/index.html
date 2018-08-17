@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta id="frsc" th:content="${_csrf.token}">
+    <meta id="lang" th:content="${#locale.language}">
+
+    <title th:text="#{musical.world}">Musical world</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/resources/css/style.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/search-style.css}" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
+          rel='stylesheet' type='text/css'>
+
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link th:href="@{/resources/js/swiperjs/idangerous.swiper.css}" rel="stylesheet">
+    <link th:href="@{/resources/js/big-video/css/bigvideo.css}" rel="stylesheet">
+
+</head>
+
+<body id="body">
+
+<script type="text/javascript">
+    if (top !== self && document.referrer.indexOf('demo.antonibotev') < 0) {
+        document.body.style.display = "none";
+        top.location.replace('http://demo.antonibotev.com/template/banda')
+    };
+</script>
+
+<!-- BEGIN top bar -->
+
+<header class="top-bar">
+    <div th:if="${#strings.equals(user.role,'USER')}"
+         class="full-width-info left"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+        <a id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
+    </div>
+    <div class="full-width-info right">
+        <!--<a href="#">Login </a>/ <a href="#">Subscribe </a>/ <a href="#">Checkout</a>--></div>
+    <div class="center-info">
+        <div class="bg-player">
+            <a th:if="${#strings.equals(#locale.language,'en')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/great-britain.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'en')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'en')}">
+                <img th:src="@{/resources/icons/great-britain.png}">
+            </a>
+            <a th:if="${#strings.equals(#locale.language,'ru')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/russia.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'ru')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'ru')}">
+                <img th:src="@{/resources/icons/russia.png}">
+            </a>
+            <a th:if="${#strings.equals(#locale.language,'arm')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/armenia.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'arm')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
+                <img th:src="@{/resources/icons/armenia.png}">
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- END top bar -->
+
+<!-- BEGIN banner area -->
+
+<div class="top-banner-area">
+    <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
+    <div class="event-counter bbox-countdown-timer">
+
+        <form th:action="@{/music/search}" role="search" method="post" class="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
+                   autocomplete="off">
+        </form>
+    </div>
+</div>
+
+<!-- END banner area -->
+
+<div class="content-wrap">
+    <div class="main-container">
+        <header>
+            <nav>
+                <ul style="font-size: 9px">
+                    <li class="sub-nav current-item">
+                        <a href="/">
+                            <i class="icon-home"></i>
+                            <span th:text="#{home}">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/news}" th:text="#{news}">News</a>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{categories}">Categories</a>
+                        <ul id="category-ul"></ul>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{other}">other</a>
+                        <ul>
+                            <li>
+                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/albums}" th:text="#{albums}">albums</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/login}" th:text="#{login}">Login</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/register}" th:text="#{register}">Register</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'USER')}">
+                        <form th:action="@{/logout}" method="post">
+                            <input style="background: none;
+                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- BEGIN mobile nav -->
+
+        <select class="bb-mobile-nav">
+            <option>Item 1</option>
+            <option>Item 2</option>
+            <option>Item 3</option>
+        </select>
+
+        <!-- END mobile nav -->
+
+        <span class="clear"></span>
+
+        <!-- BEGIN page content -->
+
+        <div class="row">
+
+            <!-- BEGIN content -->
+
+            <div class="col-md-8">
+                <content>
+
+                    <!-- BEGIN slider -->
+
+                    <div class="bb-slider-2 bluebox-slider" data-direction-nav=".arrow-links-wrap"
+                         data-control-nav=".slider-control-nav">
+                        <div class="swiper-container">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img th:src="@{/resources/images/slider-bg-1.jpg}" class=" img-preload"
+                                         alt="sample image"
+                                         data-aspectratio="1.3333" id="img-52552406dfa3e">
+                                    <div class="slider-caption">
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <img th:src="@{/resources/images/slider-bg-2.jpg}" class=" img-preload"
+                                         alt="2-20100201195917"
+                                         style="display: none;" data-aspectratio="1.3719" id="img-52552406e0e11">
+                                    <div class="slider-caption">
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <img th:src="@{/resources/images/slider-bg-3.jpg}" class=" img-preload"
+                                         alt="sample image"
+                                         style="display: none;" data-aspectratio="1.3333" id="img-52552406e2e77">
+                                    <div class="slider-caption">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bullets-wrap">
+                            <ul class="slider-control-nav">
+                                <li class="current">
+                                    <a href="index.html#"></a></li>
+                                <li><a href="index.html#"></a></li>
+                                <li><a href="index.html#"></a></li>
+                            </ul>
+                        </div>
+                        <div  class="arrow-links-wrap">
+                            <a style="width: 30px;cursor: pointer;position: relative;top: 20px"  class="arrow-left-link prev">
+                                <img  th:src="@{/resources/icons/previous.png}">
+                            </a>
+                            <a style="width: 30px;cursor: pointer;position: relative;top: 20px"  class="arrow-right-link next">
+                                <img th:src="@{/resources/icons/next.png}">
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- END slider -->
+
+                    <div class="bluebox-heading">
+                        <h3 th:text="#{new.news}">New news</h3>
+                        <a th:href="@{/news}">
+                            <i class="icon-list-ul"></i>
+                            <span th:text="#{news}">News +</span>
+                        </a>
+                    </div>
+
+                    <div class="row content-row">
+                        <th:block th:each="news : ${main.newsList}" th:if="${newsStat.index < 2}">
+                            <div class="col-md-6">
+                                <section class="featured-post">
+                                    <a class="image-wrap" href="index.html#">
+                                        <img th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
+                                             alt="demo image">
+                                        <span class="image-details"></span>
+                                    </a>
+                                    <h1><a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">Title</a>
+                                    </h1>
+                                    <p th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                        Description
+                                    </p>
+                                    <div class="bluebox-info-line">
+                                        <span class="featured-post-date"
+                                              th:text="${#dates.format(news.createdDate,'dd.MM.yyyyy HH:mm')}">created date</span>
+                                        <span class="featured-post-author"></span>
+                                        <a class="more-link" th:href="@{/news/{id}(id = ${news.id})}"
+                                           th:text="#{read.more}">Read More</a>
+                                    </div>
+                                </section>
+                            </div>
+                        </th:block>
+                    </div>
+
+                    <div class="row content-row">
+                        <th:block th:each="news : ${main.newsList}" th:if="${newsStat.index >= 2}">
+                            <div class="col-md-6">
+                                <section class="featured-post">
+                                    <a class="image-wrap" href="index.html#">
+                                        <img th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
+                                             alt="demo image">
+                                        <span class="image-details"></span>
+                                    </a>
+                                    <h1><a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">Title</a>
+                                    </h1>
+                                    <p th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                        Description
+                                    </p>
+                                    <div class="bluebox-info-line">
+                                        <span class="featured-post-date"
+                                              th:text="${#dates.format(news.createdDate,'dd.MM.yyyyy HH:mm')}">created date</span>
+                                        <span class="featured-post-author"></span>
+                                        <a class="more-link" th:href="@{/news/{id}(id = ${news.id})}"
+                                           th:text="#{read.more}">Read More</a>
+                                    </div>
+                                </section>
+                            </div>
+                        </th:block>
+                    </div>
+
+                    <div class="row content-row">
+
+                        <div class="col-md-6">
+                            <div class="bluebox-heading">
+                                <h3 th:text="#{popular.musicians}">Popular musicians</h3>
+                                <a th:if="${#strings.equals(#locale.language,'en')}" th:href="@{/albums}">
+                                    <i class="icon-list-ul"></i>
+                                    <span th:text="#{musicians}">Musicians</span>
+                                </a>
+                                <a th:unless="${#strings.equals(#locale.language,'en')}" style="position: relative;top: -33px;left: 40px" th:href="@{/albums}">
+                                    <i class="icon-list-ul"></i>
+                                    <span th:text="#{musicians}">Musicians</span>
+                                </a>
+                            </div>
+                            <ul class="news-list">
+                                <th:block th:each="musician : ${main.musicianList}">
+                                    <li>
+                                        <a href="index.html#" class="image-wrap">
+                                            <img th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}"
+                                                 alt="demo image">
+                                            <span class="image-details"></span>
+                                        </a>
+                                        <h4>
+                                            <a th:href="@{/musician/{id}(id = ${musician.id})}"
+                                               th:text="${musician.name} + ' ' + ${musician.surname}"></a>
+                                        </h4>
+                                        <span th:text="#{birth.date} + ': ' + ${#dates.format(musician.birthDate,'dd.MM.yyyy')}"></span>
+                                    </li>
+                                </th:block>
+                            </ul>
+                            <span class="clear"></span>
+                        </div>
+
+                        <div class="col-md-6" style="position: relative;left: 40px">
+                            <div class="bluebox-heading">
+                                <h3 th:text="#{popular.albums}">Popular albums</h3>
+                                <a th:href="@{/albums}"><i class="icon-list-ul"></i>
+                                    <span th:text="#{albums}">Albums</span>
+                                </a>
+                            </div>
+
+                            <ul class="news-list">
+                                <th:block th:each="album : ${main.albumList}">
+                                    <li>
+                                        <a href="index.html#" class="image-wrap">
+                                            <img th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                                 alt="demo image">
+                                            <span class="image-details"></span>
+                                        </a>
+                                        <h4>
+                                            <a th:href="@{/album/{id}(id = ${album.id})}" th:text="${album.name}"></a>
+                                        </h4>
+                                        <span th:text="#{release.date} + ': ' + ${#dates.format(album.releaseDate,'dd.MM.yyyy')}">release date</span>
+                                    </li>
+                                </th:block>
+                            </ul>
+                            <span class="clear"></span>
+                        </div>
+                    </div>
+                </content>
+            </div>
+
+            <!-- END content -->
+
+            <!-- BEGIN sidebar -->
+
+            <div class="col-md-4">
+
+                <aside>
+
+                    <!-- BEGIN events -->
+
+                    <div class="bluebox-heading">
+                        <h3 th:text="#{popular.music}">Popular music</h3>
+                        <a th:href="@{/music}">
+                            <i class="icon-calendar"></i>
+                            <span th:text="#{music}">Music</span>
+                        </a>
+                    </div>
+                    <div class="audio-tracks-wrap gumm-audio-tracks-widget">
+                        <th:block th:each="music : ${main.popularsMusicList}">
+                            <div style="width: 298px" class="gumm-audio-player" data-play-pause-button-mode="toggle"
+                                 th:data-src="'/resources/music/' + ${music.mp3}">
+                                <div class="details">
+                                    <h4 th:text="${music.name}">Name</h4>
+                                    <div class="track-progress-bar">
+                                        <a style="position: relative;left: 200px;top: -40px" download th:href="@{/resources/music/{music}(music =${music.mp3})}">
+                                            <img th:src="@{/resources/icons/download.png}">
+                                        </a>
+                                        <a href="index.html#" class="track-progress">
+                                            <span style="width:0%"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a class="button button-play" href="index.html#">
+                                    <span><i class="icon-play"></i></span>
+                                    <span><i class="icon-play"></i></span>
+                                </a>
+                            </div>
+                        </th:block>
+
+                    </div>
+
+
+                    <div class="bluebox-heading">
+                        <h3 th:text="'2018 ' + #{music}"></h3>
+                        <a th:href="@{/music}">
+                            <i class="icon-calendar"></i>
+                            <span th:text="#{music}">Music</span>
+                        </a>
+                    </div>
+
+                    <div class="audio-tracks-wrap gumm-audio-tracks-widget">
+                        <th:block th:each="music : ${main.newMusicList}">
+                            <div class="gumm-audio-player" data-play-pause-button-mode="toggle"
+                                 th:data-src="'/resources/music/' + ${music.mp3}">
+                                <div class="details">
+                                    <h4 th:text="${music.name}">Name</h4>
+                                    <div class="track-progress-bar">
+                                        <a href="index.html#" class="track-progress">
+                                            <span style="width:0%"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <a class="button button-play" href="index.html#">
+                                    <span><i class="icon-play"></i></span>
+                                    <span><i class="icon-play"></i></span>
+                                </a>
+                            </div>
+                        </th:block>
+                    </div>
+
+                    <!-- END audio -->
+
+                </aside>
+            </div>
+
+            <!-- END sidebar -->
+
+        </div>
+        <span class="clear"></span>
+
+        <!-- END page content -->
+
+    </div>
+
+    <!-- BEGIN footer -->
+
+    <footer>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="bluebox-heading">
+                    <h3 th:text="#{about.us}">About us</h3>
+                </div>
+                <span th:text="#{about.us.msg}">
+                </span>
+                <span class="clear"></span>
+            </div>
+
+            <div class="col-md-4">
+            </div>
+
+            <div class="col-md-4">
+                <div class="bluebox-heading">
+                    <h3 th:text="#{social}">Social</h3>
+                </div>
+                <div class="social-widget">
+                    <ul>
+                        <li>
+                            <a href="https://www.facebook.com">
+                                <span><i class="icon-facebook"></i></span>
+                                <span><i class="icon-facebook"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.google.com">
+                                <span><i class="icon-dribbble"></i></span>
+                                <span><i class="icon-dribbble"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com">
+                                <span><i class="icon-instagram"></i></span>
+                                <span><i class="icon-instagram"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.twitter.com">
+                                <span><i class="icon-twitter"></i></span>
+                                <span><i class="icon-twitter"></i></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <span class="clear"></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- END footer -->
+
+    <div class="copyrights-content">
+        M U S I C A L ____________ W O R L D
+    </div>
+</div>
+
+<!-- BEGIN sticky player -->
+
+<div  class="footer-sticky-player">
+    <div  id="main-music" class="player-wrap gumm-audio-player" th:data-src="'/resources/music/' + ${main.music.mp3}"
+         data-play-pause-button-mode="toggle" data-playlist-container=".gumm-audio-player-playilst">
+        <div class="track-image">
+            <img  id="musician-img" src="" alt="preview image">
+        </div>
+
+        <div class="buttons">
+            <div class="buttons-wrap">
+                <a class="player-button button-play" href="index.html#">
+                    <span><i class="icon-play"></i></span>
+                    <span><i class="icon-play"></i></span>
+                </a>
+            </div>
+            <div class="volume">
+                <a  class="volume-link button-mute">
+                    <span><i class="icon-volume-up"></i></span>
+                    <span><i class="icon-volume-up"></i></span>
+                </a>
+                <a  class="volume-link button-unmute">
+                    <span><i class="icon-volume-off"></i></span>
+                    <span><i class="icon-volume-off"></i></span>
+                </a>
+                <a class="volume-bar">
+                    <span></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END sticky player -->
+
+
+<noscript th:text="#{no.script.msg}"></noscript>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script th:src="@{/resources/bootstrap-3.0.0/assets/js/jquery.js}"></script>
+<script th:src="@{/resources/bootstrap-3.0.0/dist/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jquery-1.10.2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jquery-ui-1.10.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/custom.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jplayer/jquery.jplayer.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/swiperjs/idangerous.swiper.js}"></script>
+<script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
+<script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
+<script th:if="${#strings.equals(user.role,'USER')}" th:src="@{/resources/js/musical/bookmark.js}"></script>
+<script th:src="@{/resources/js/musical/generic.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta id="username-error" th:content="#{username.error}">
+    <meta id="password-error" th:content="#{password.error}">
+    <meta id="frsc" th:content="${_csrf.token}">
+    <meta id="lang" th:content="${#locale.language}">
+
+    <title th:text="#{login}">Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/resources/css/style.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/search-style.css}" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
+          rel='stylesheet' type='text/css'>
+
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link th:href="@{/resources/js/swiperjs/idangerous.swiper.css}" rel="stylesheet">
+    <link th:href="@{/resources/js/big-video/css/bigvideo.css}" rel="stylesheet">
+
+</head>
+
+<body id="body">
+<header class="top-bar">
+    <div class="full-width-info left">
+    </div>
+    <div class="full-width-info right">
+        <!--<a href="#">Login </a>/ <a href="#">Subscribe </a>/ <a href="#">Checkout</a>--></div>
+    <div class="center-info">
+        <div class="bg-player">
+            <a th:if="${#strings.equals(#locale.language,'en')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/great-britain.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'en')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'en')}">
+                <img th:src="@{/resources/icons/great-britain.png}">
+            </a>
+            <a th:if="${#strings.equals(#locale.language,'ru')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/russia.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'ru')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'ru')}">
+                <img th:src="@{/resources/icons/russia.png}">
+            </a>
+            <a th:if="${#strings.equals(#locale.language,'arm')}"
+               class="player-button">
+                <img th:src="@{/resources/icons/armenia.png}">
+            </a>
+            <a th:unless="${#strings.equals(#locale.language,'arm')}"
+               class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
+                <img th:src="@{/resources/icons/armenia.png}">
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="top-banner-area">
+    <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
+    <div class="event-counter bbox-countdown-timer">
+
+        <form th:action="@{/music/search}" role="search" method="post" class="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
+                   autocomplete="off">
+        </form>
+    </div>
+</div>
+
+<div class="content-wrap">
+    <div class="main-container">
+        <header>
+            <nav>
+                <ul style="font-size: 9px">
+                    <li class="sub-nav">
+                        <a href="/">
+                            <i class="icon-home"></i>
+                            <span th:text="#{home}">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/news}" th:text="#{news}">News</a>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{categories}">Categories</a>
+                        <ul id="category-ul"></ul>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{other}">other</a>
+                        <ul>
+                            <li>
+                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/albums}" th:text="#{albums}">albums</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="current-item">
+                        <a th:href="@{/login}" th:text="#{login}">Login</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/register}" th:text="#{register}">Register</a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <!-- BEGIN mobile nav -->
+
+        <select class="bb-mobile-nav">
+            <option>Item 1</option>
+            <option>Item 2</option>
+            <option>Item 3</option>
+        </select>
+
+        <!-- END mobile nav -->
+
+        <span class="clear"></span>
+
+        <!-- BEGIN page content -->
+
+        <div class="row">
+
+            <!-- BEGIN content -->
+
+            <div class="col-md-8">
+                <content>
+                    <form method="post" th:action="@{/login}" id="login-form" class="bluebox-contact">
+                        <span th:if="${#request.getParameter('error') ne null}" style="color: red" th:text="#{login.error}"></span>
+                        <br/>
+                        <div class="contact-form-inputs">
+                            <div class="input-wrap-text input-name">
+                                <span id="usernameError" style="color: red" ></span>
+                                <input class="input" style="border:1px solid #357ebd" type="text" name="username" th:placeholder="#{username}" data-default-label="Name *">
+                            </div>
+                            <div class="input-wrap-text input-email">
+                                <span id="passwordError" style="color: red" ></span>
+                                <input class="input" style="border:1px solid #357ebd" type="password" name="password" th:placeholder="#{password}" data-default-label="Email *">
+                            </div>
+                        </div>
+                        <div>
+                            <input type="submit" class="default-button" data-title="Submit"
+                                   data-action-title="Sending..." th:value="#{send}">
+                        </div>
+                    </form>
+                </content>
+            </div>
+        </div>
+        <span class="clear"></span>
+    </div>
+    <footer>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="bluebox-heading">
+                    <h3 th:text="#{about.us}">About us</h3>
+                </div>
+                <span th:text="#{about.us.msg}">
+                </span>
+                <span class="clear"></span>
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                <div class="bluebox-heading">
+                    <h3 th:text="#{social}">Social</h3>
+                </div>
+                <div class="social-widget">
+                    <ul>
+                        <li>
+                            <a href="https://www.facebook.com">
+                                <span><i class="icon-facebook"></i></span>
+                                <span><i class="icon-facebook"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.google.com">
+                                <span><i class="icon-dribbble"></i></span>
+                                <span><i class="icon-dribbble"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.instagram.com">
+                                <span><i class="icon-instagram"></i></span>
+                                <span><i class="icon-instagram"></i></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.twitter.com">
+                                <span><i class="icon-twitter"></i></span>
+                                <span><i class="icon-twitter"></i></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <span class="clear"></span>
+            </div>
+        </div>
+    </footer>
+
+    <div class="copyrights-content">
+        M U S I C A L ____________ W O R L D
+    </div>
+</div>
+
+<!-- END sticky player -->
+<noscript th:text="#{no.script.msg}"></noscript>
+
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script th:src="@{/resources/bootstrap-3.0.0/assets/js/jquery.js}"></script>
+<script th:src="@{/resources/bootstrap-3.0.0/dist/js/bootstrap.min.js}"></script>
+
+
+<script type="text/javascript" th:src="@{/resources/js/jquery-1.10.2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jquery-ui-1.10.3.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/custom.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/jplayer/jquery.jplayer.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/js/swiperjs/idangerous.swiper.js}"></script>
+<script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
+<script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
+<script th:src="@{/resources/js/musical/generic.js}"></script>
+<script th:src="@{/resources/js/musical/login.js}"></script>
+</body>
+</html>
