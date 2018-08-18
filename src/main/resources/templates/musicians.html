@@ -5,24 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <meta id="username-error" th:content="#{username.error}">
-    <meta id="password-error" th:content="#{password.error}">
     <meta id="frsc" th:content="${_csrf.token}">
     <meta id="lang" th:content="${#locale.language}">
-    <meta id="name-error" th:content="#{name.error}">
-    <meta id="surname-error" th:content="#{surname.error}">
-    <meta id="birth-date-error" th:content="#{birth.date.error}">
-    <meta id="biography-error" th:content="#{biography.error}">
-    <meta id="image-error" th:content="#{image.error}">
 
-    <title th:text="#{add.musician}">Login</title>
+    <title th:text="#{musicians}">Musicians</title>
+    <title th:text="#{musical.world}">Musical world</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
+    <link th:unless="${#strings.equals(user.role,'ADMIN')}" th:href="@{/resources/css/search-style.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/pagination-style.css}" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link th:href="@{/resources/css/style.css}" rel="stylesheet">
-    <link th:href="@{/resources/css/search-style.css}" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
           rel='stylesheet' type='text/css'>
@@ -30,15 +25,17 @@
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link th:href="@{/resources/js/swiperjs/idangerous.swiper.css}" rel="stylesheet">
     <link th:href="@{/resources/js/big-video/css/bigvideo.css}" rel="stylesheet">
-
 </head>
 
 <body id="body">
+
 <!-- BEGIN top bar -->
 
 <header class="top-bar" style="height: 45px">
-    <div class="full-width-info left">
+    <div th:unless="${#strings.equals(user.role,'ROLE_ANONYMOUS')}"
+         class="full-width-info left">
         <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+        <a th:if="${#strings.equals(user.role,'USER')}" id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
     </div>
     <div class="full-width-info right">
         <!--<a href="#">Login </a>/ <a href="#">Subscribe </a>/ <a href="#">Checkout</a>--></div>
@@ -68,6 +65,7 @@
                class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
+
             <form th:action="@{/logout}" method="post">
                 <input style="background: none;
                             border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
@@ -75,6 +73,7 @@
         </div>
     </div>
 </header>
+
 <!-- END top bar -->
 
 <!-- BEGIN banner area -->
@@ -82,12 +81,65 @@
 <div class="top-banner-area">
     <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
     <div class="event-counter bbox-countdown-timer">
+
+        <form th:unless="${#strings.equals(user.role,'ADMIN')}" th:action="@{/music/search}" role="search" method="post" class="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
+                   autocomplete="off">
+        </form>
     </div>
 </div>
+<!-- END banner area -->
 
 <div class="content-wrap">
     <div class="main-container">
-        <header>
+        <header th:unless="${#strings.equals(user.role,'ADMIN')}">
+            <nav>
+                <ul style="font-size: 9px">
+                    <li class="sub-nav">
+                        <a href="/">
+                            <i class="icon-home"></i>
+                            <span th:text="#{home}">Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/news}" th:text="#{news}">News</a>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{categories}">Categories</a>
+                        <ul id="category-ul"></ul>
+                    </li>
+                    <li class="subnav current-item">
+                        <a style="cursor: pointer" th:text="#{other}">other</a>
+                        <ul>
+                            <li>
+                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                            </li>
+                            <li class="current-item">
+                                <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/albums}" th:text="#{albums}">albums</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/login}" th:text="#{login}">Login</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/register}" th:text="#{register}">Register</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'USER')}">
+                        <form th:action="@{/logout}" method="post">
+                            <input style="background: none;
+                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <header th:if="${#strings.equals(user.role,'ADMIN')}">
             <nav>
                 <ul>
                     <li>
@@ -107,7 +159,7 @@
                     <li class="subnav current-item">
                         <a style="cursor: pointer" th:text="#{music}">Music</a>
                         <ul>
-                            <li class="current-item">
+                            <li>
                                 <a th:href="@{/admin/musician/add}" th:text="#{add.musician}">add musicians</a>
                             </li>
                             <li>
@@ -116,7 +168,7 @@
                             <li>
                                 <a th:href="@{/admin/music/add}" th:text="#{add.music}">add music</a>
                             </li>
-                            <li>
+                            <li class="current-item">
                                 <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
                             </li>
                             <li>
@@ -136,6 +188,8 @@
                 </ul>
             </nav>
         </header>
+
+
         <!-- BEGIN mobile nav -->
 
         <select class="bb-mobile-nav">
@@ -149,60 +203,104 @@
         <span class="clear"></span>
 
         <!-- BEGIN page content -->
+        <div id="musicians-blog">
+            <div class="row">
 
-        <div class="row">
+                <!-- BEGIN content -->
 
-            <!-- BEGIN content -->
+                <div class="col-md-12">
+                    <content>
 
-            <div class="col-md-8">
-                <content>
-                    <form method="post" th:action="@{/admin/musician/add}" id="musician-form"
-                          class="bluebox-contact" th:object="${form}" enctype="multipart/form-data">
-                        <div class="contact-form-inputs">
-                            <div class="input-wrap-text input-name">
-                                <span th:if="${#fields.hasErrors('name')}" id="nameError" style="color: red" th:text="#{name.error}"></span>
-                                <span th:unless="${#fields.hasErrors('name')}" id="nameError" style="color: red"></span>
-                                <input class="input musician-input" style="border:1px solid #357ebd" type="text" th:field="*{name}" th:placeholder="#{name}" id="name" data-default-label="Name *">
-                            </div>
-                            <div class="input-wrap-textarea input-message">
-                                <span th:if="${#fields.hasErrors('surname')}" id="surnameError" style="color: red" th:text="#{surname.error}"></span>
-                                <span th:unless="${#fields.hasErrors('surname')}" id="surnameError" style="color: red"></span>
-                                <input class="input musician-input" style="border:1px solid #357ebd" type="text" th:field="*{surname}" th:placeholder="#{surname}" id="surname" data-default-label="Name *">
-                            </div>
-                            <div class="input-wrap-textarea input-message">
-                                <span th:if="${#fields.hasErrors('birthDate')}" id="birthDateError" style="color: red" th:text="#{birth.date.error}"></span>
-                                <span th:unless="${#fields.hasErrors('birthDate')}" id="birthDateError" style="color: red"></span>
-                                <br/>
-                                <label for="birthDate" th:text="#{birth.date}"></label>
-                                <br/>
-                                <input class="input musician-input" style="border:1px solid #357ebd" type="date" th:field="*{birthDate}" id="birthDate" data-default-label="Name *">
-                            </div>
-                            <br/>
-                            <div class="input-wrap-textarea input-message">
-                                <span th:if="${#fields.hasErrors('biography')}" id="biographyError" style="color: red" th:text="#{biography.error}"></span>
-                                <span th:unless="${#fields.hasErrors('biography')}" id="biographyError" style="color: red"></span>
-                                <textarea style="border:1px solid #357ebd" data-default-label="Message *" rows="6" class="news-input musician-input" id="biography" th:field="*{biography}" th:placeholder="#{biography}"></textarea>
-                            </div>
-                            <div class="input-wrap-text input-email">
-                                <span id="imageError" style="color: red" th:if="${#fields.hasErrors('image')}" th:text="#{image.error}"></span>
-                                <span id="imageError" style="color: red" th:unless="${#fields.hasErrors('image')}"></span>
-                                <br/>
-                                <input  type="file" th:field="*{image}" id="file" class="inputfile news-input" />
-                                <label style="cursor: pointer" for="file" th:text="#{choose.photo}">Choose a photo</label><br/>
-                            </div>
+                        <div class="row content-row">
+                            <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index < 3}">
+                                <div class="col-md-4">
+                                    <a th:if="${#strings.equals(user.role,'ADMIN')}" class="delete-musician" th:id="${musician.id}"
+                                       style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                                        <img   th:src="@{/resources/icons/delete.png}">
+                                    </a>
+                                    <div class="album-wrap">
+                                        <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                                        <div class="album-caption">
+                                            <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                                                <a style="cursor: pointer" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                            </h4>
+                                            <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                                                <a th:href="@{/musician/{id}(id = ${musician.id})}" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                            </h4>
+                                            <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
-                        <div>
-                            <input type="submit" class="default-button" data-title="Submit"
-                                   data-action-title="Sending..." th:value="#{add}">
+
+                        <div class="row content-row">
+
+                            <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index >= 3}">
+                                <div class="col-md-4">
+                                    <a th:if="${#strings.equals(user.role,'ADMIN')}" class="delete-musician" th:id="${musician.id}"
+                                       style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                                        <img th:src="@{/resources/icons/delete.png}">
+                                    </a>
+                                    <div class="album-wrap">
+                                        <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                                        <div class="album-caption">
+                                            <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                                                <a style="cursor: pointer" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                            </h4>
+                                            <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                                                <a th:href="@{/musician/{id}(id = ${musician.id})}" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                            </h4>
+                                            <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
                         </div>
-                    </form>
-                </content>
+
+                    </content>
+
+                </div>
+
             </div>
+            <span class="clear"></span>
+
+            <nav data-pagination style="position:relative;top: 40px">
+                <a th:if="${pageNumber eq 0}" disabled>
+                    <img th:src="@{/resources/icons/pagination-previous.png}">
+                </a>
+                <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber})}" >
+                    <img th:src="@{/resources/icons/pagination-previous.png}">
+                </a>
+                <ul>
+                    <th:block th:each="i : ${#numbers.sequence(1,length)}">
+                        <li th:if="${(i-1)} ne ${pageNumber}">
+                            <a th:href="@{${#request.getRequestURI()}(page = ${i})}" th:text="${i}">2</a>
+                        </li>
+                        <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                            <a  th:text="${i}">2</a>
+                        </li>
+                    </th:block>
+                </ul>
+                <a th:if="${pageNumber} eq ${length - 1}" disabled>
+                    <img th:src="@{/resources/icons/pagination-next.png}">
+                </a>
+                <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2})}">
+                    <img th:src="@{/resources/icons/pagination-next.png}">
+                </a>
+            </nav>
         </div>
-        <span class="clear"></span>
+
+        <!-- END page content -->
+
     </div>
+
+    <!-- BEGIN footer -->
+
     <footer>
+
         <div class="row">
+
             <div class="col-md-4">
                 <div class="bluebox-heading">
                     <h3 th:text="#{about.us}">About us</h3>
@@ -211,8 +309,10 @@
                 </span>
                 <span class="clear"></span>
             </div>
+
             <div class="col-md-4">
             </div>
+
             <div class="col-md-4">
                 <div class="bluebox-heading">
                     <h3 th:text="#{social}">Social</h3>
@@ -250,6 +350,8 @@
         </div>
     </footer>
 
+    <!-- END footer -->
+
     <div class="copyrights-content">
         M U S I C A L ____________ W O R L D
     </div>
@@ -257,15 +359,11 @@
 
 <!-- END sticky player -->
 <noscript th:text="#{no.script.msg}"></noscript>
-
-
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script th:src="@{/resources/bootstrap-3.0.0/assets/js/jquery.js}"></script>
 <script th:src="@{/resources/bootstrap-3.0.0/dist/js/bootstrap.min.js}"></script>
-
-
 <script type="text/javascript" th:src="@{/resources/js/jquery-1.10.2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/js/jquery-ui-1.10.3.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/js/custom.js}"></script>
@@ -273,7 +371,10 @@
 <script type="text/javascript" th:src="@{/resources/js/swiperjs/idangerous.swiper.js}"></script>
 <script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
 <script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
-<script th:src="@{/resources/js/musical/admin.js}"></script>
-<script th:src="@{/resources/js/musical/musician.js}"></script>
+<script th:if="${#strings.equals(user.role,'USER')}" th:src="@{/resources/js/musical/bookmark.js}"></script>
+<script th:unless="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/generic.js}"></script>
+<script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/musician.js}"></script>
+<script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/admin.js}"></script>
+
 </body>
 </html>

@@ -9,8 +9,13 @@
     <meta id="password-error" th:content="#{password.error}">
     <meta id="frsc" th:content="${_csrf.token}">
     <meta id="lang" th:content="${#locale.language}">
+    <meta id="name-error" th:content="#{name.error}">
+    <meta id="description-error" th:content="#{description.error}">
+    <meta id="release-date-error" th:content="#{release.date.error}">
+    <meta id="musician-id-error" th:content="#{musician.id.error}">
+    <meta id="image-error" th:content="#{image.error}">
 
-    <title th:text="#{login}">Login</title>
+    <title th:text="#{add.album}">Login</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
@@ -29,8 +34,11 @@
 </head>
 
 <body id="body">
-<header class="top-bar">
+<!-- BEGIN top bar -->
+
+<header class="top-bar" style="height: 45px">
     <div class="full-width-info left">
+        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
     </div>
     <div class="full-width-info right">
         <!--<a href="#">Login </a>/ <a href="#">Subscribe </a>/ <a href="#">Checkout</a>--></div>
@@ -60,19 +68,20 @@
                class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
+            <form th:action="@{/logout}" method="post">
+                <input style="background: none;
+                            border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+            </form>
         </div>
     </div>
 </header>
+<!-- END top bar -->
+
+<!-- BEGIN banner area -->
 
 <div class="top-banner-area">
     <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
     <div class="event-counter bbox-countdown-timer">
-
-        <form th:action="@{/music/search}" role="search" method="post" class="search-form">
-            <input type="submit" value="" class="search-submit">
-            <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
-                   autocomplete="off">
-        </form>
     </div>
 </div>
 
@@ -80,25 +89,32 @@
     <div class="main-container">
         <header>
             <nav>
-                <ul style="font-size: 9px">
-                    <li class="sub-nav">
-                        <a href="/">
-                            <i class="icon-home"></i>
-                            <span th:text="#{home}">Home</span>
-                        </a>
-                    </li>
+                <ul>
                     <li>
-                        <a th:href="@{/news}" th:text="#{news}">News</a>
+                        <a href="/"><i class="icon-home"></i><span th:text="#{home}">Home</span></a>
                     </li>
                     <li class="subnav">
-                        <a style="cursor: pointer" th:text="#{categories}">Categories</a>
-                        <ul id="category-ul"></ul>
-                    </li>
-                    <li class="subnav">
-                        <a style="cursor: pointer" th:text="#{other}">other</a>
+                        <a style="cursor: pointer" th:text="#{news}">News</a>
                         <ul>
                             <li>
-                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                                <a th:href="@{/admin/news/add}" th:text="#{news.add}">add news</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/news}" th:text="#{all.news}">all news</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="subnav current-item">
+                        <a style="cursor: pointer" th:text="#{music}">Music</a>
+                        <ul>
+                            <li>
+                                <a th:href="@{/admin/musician/add}" th:text="#{add.musician}">add musicians</a>
+                            </li>
+                            <li class="current-item">
+                                <a th:href="@{/admin/album/add}" th:text="#{add.album}">add album</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/admin/music/add}" th:text="#{add.music}">add music</a>
                             </li>
                             <li>
                                 <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
@@ -106,13 +122,16 @@
                             <li>
                                 <a th:href="@{/albums}" th:text="#{albums}">albums</a>
                             </li>
+                            <li>
+                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                            </li>
                         </ul>
                     </li>
-                    <li class="current-item">
-                        <a th:href="@{/login}" th:text="#{login}">Login</a>
+                    <li>
+                        <a th:href="@{/admin/main/change}" th:text="#{change.main.page}">Change Main page</a>
                     </li>
                     <li>
-                        <a th:href="@{/register}" th:text="#{register}">Register</a>
+                        <a th:href="@{/admin/category/add}" th:text="#{add.category}">Add category</a>
                     </li>
                 </ul>
             </nav>
@@ -137,23 +156,50 @@
 
             <div class="col-md-8">
                 <content>
-                    <form method="post" th:action="@{/login}" id="login-form" class="bluebox-contact">
-                        <span th:if="${#request.getParameter('error') ne null}" style="color: red" th:text="#{login.error}"></span>
-                        <br/>
-                        <br/>
+                    <form method="post" th:action="@{/admin/album/add}" id="album-form"
+                          class="bluebox-contact" th:object="${form}" enctype="multipart/form-data">
                         <div class="contact-form-inputs">
                             <div class="input-wrap-text input-name">
-                                <span id="usernameError" style="color: red" ></span>
-                                <input class="input" style="border:1px solid #357ebd" type="text" name="username" th:placeholder="#{username}" data-default-label="Name *">
+                                <span th:if="${#fields.hasErrors('name')}" id="nameError" style="color: red" th:text="#{name.error}"></span>
+                                <span th:unless="${#fields.hasErrors('name')}" id="nameError" style="color: red"></span>
+                                <input class="input album-input" style="border:1px solid #357ebd" type="text" th:field="*{name}" th:placeholder="#{name}" id="name" data-default-label="Name *">
                             </div>
+                            <div class="input-wrap-textarea input-message">
+                                <span th:if="${#fields.hasErrors('description')}" id="descriptionError" style="color: red" th:text="#{description.error}"></span>
+                                <span th:unless="${#fields.hasErrors('description')}" id="descriptionError" style="color: red"></span>
+                                <textarea style="border:1px solid #357ebd" data-default-label="Message *" rows="6" class="news-input album-input" id="description" th:field="*{description}" th:placeholder="#{description}"></textarea>
+                            </div>
+                            <div class="input-wrap-textarea input-message">
+                                <span th:if="${#fields.hasErrors('releaseDate')}" id="releaseDateError" style="color: red" th:text="#{release.date.error}"></span>
+                                <span th:unless="${#fields.hasErrors('releaseDate')}" id="releaseDateError" style="color: red"></span>
+                                <br/>
+                                <label for="releaseDate" th:text="#{release.date}"></label>
+                                <br/>
+                                <input class="input album-input" style="border:1px solid #357ebd" type="date" th:field="*{releaseDate}" id="releaseDate" data-default-label="Name *">
+                            </div>
+                            <br/>
+                            <div class="input-wrap-textarea input-message">
+                                <span id="musicianIdError" style="color: red"></span>
+                                <br/>
+                                <select class="empty" name="musicianId" id="musicians">
+                                    <option value="0" th:text="#{musicians}">musicians</option>
+                                    <div id="musicians-blog">
+
+                                    </div>
+                                </select>
+                            </div>
+                            <br/>
                             <div class="input-wrap-text input-email">
-                                <span id="passwordError" style="color: red" ></span>
-                                <input class="input" style="border:1px solid #357ebd" type="password" name="password" th:placeholder="#{password}" data-default-label="Email *">
+                                <span id="imageError" style="color: red" th:if="${#fields.hasErrors('image')}" th:text="#{image.error}"></span>
+                                <span id="imageError" style="color: red" th:unless="${#fields.hasErrors('image')}"></span>
+                                <br/>
+                                <input  type="file" th:field="*{image}" id="file" class="inputfile album-input" />
+                                <label style="cursor: pointer" for="file" th:text="#{choose.photo}">Choose a photo</label><br/>
                             </div>
                         </div>
                         <div>
                             <input type="submit" class="default-button" data-title="Submit"
-                                   data-action-title="Sending..." th:value="#{login}">
+                                   data-action-title="Sending..." th:value="#{add}">
                         </div>
                     </form>
                 </content>
@@ -233,7 +279,7 @@
 <script type="text/javascript" th:src="@{/resources/js/swiperjs/idangerous.swiper.js}"></script>
 <script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
 <script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
-<script th:src="@{/resources/js/musical/generic.js}"></script>
-<script th:src="@{/resources/js/musical/login.js}"></script>
+<script th:src="@{/resources/js/musical/admin.js}"></script>
+<script th:src="@{/resources/js/musical/album.js}"></script>
 </body>
 </html>

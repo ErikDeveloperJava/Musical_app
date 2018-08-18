@@ -1,0 +1,54 @@
+<div class="row" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- BEGIN content -->
+
+    <div class="col-md-12">
+        <content>
+
+            <div class="row content-row">
+                <th:block th:each="album : ${albums}" th:if="${albumStat.index < 3}">
+                    <div class="col-md-4">
+                        <a class="delete-album" th:id="${album.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px" th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                 alt="demo image">
+                            <div class="album-caption">
+                                <h4 >
+                                    <a style="cursor: pointer" th:text="${album.name}">Name</a>
+                                </h4>
+                                <span th:text="${#dates.format(album.releaseDate,'dd.MM.yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="row content-row">
+                <th:block th:each="album : ${albums}" th:if="${albumStat.index >= 3}">
+                    <div class="col-md-4">
+                        <a class="delete-album" th:id="${album.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px" th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                 alt="demo image">
+                            <div class="album-caption">
+                                <h4 >
+                                    <a style="cursor: pointer" th:text="${album.name}">Name</a>
+                                </h4>
+                                <span th:text="${#dates.format(album.releaseDate,'dd.MM.yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+        </content>
+
+    </div>
+
+</div>

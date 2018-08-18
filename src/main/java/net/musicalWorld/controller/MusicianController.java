@@ -5,18 +5,19 @@ import net.musicalWorld.model.Musician;
 import net.musicalWorld.page.Pages;
 import net.musicalWorld.service.MusicianService;
 import net.musicalWorld.util.FileUtil;
+import net.musicalWorld.util.PageableUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class MusicianController implements Pages {
@@ -54,5 +55,31 @@ public class MusicianController implements Pages {
             musicianService.add(musician,form.getImage());
         }
         return "redirect:/musicians";
+    }
+
+    @GetMapping("/musicians")
+    public String musicians(Pageable pageable,Model model,
+                           @RequestParam(value = "token",required = false,defaultValue = "NONE")String token){
+        int count = musicianService.count();
+        int length = PageableUtil.getLength(count, 6);
+        pageable = PageableUtil.getChecked(pageable,length);
+        model.addAttribute("musicians",musicianService.getAll(pageable));
+        model.addAttribute("length",length);
+        model.addAttribute("pageNumber",pageable.getPageNumber());
+        return token.equals("NONE") ? MUSICIANS : MUSICIAN_JS;
+    }
+
+    @PostMapping("/admin/musician/delete/{id}")
+    public @ResponseBody
+    boolean delete(@PathVariable("id")int id){
+        LOGGER.debug("id : {}",id);
+        musicianService.deleteById(id);
+        return true;
+    }
+
+    @PostMapping("/admin/musicians")
+    public @ResponseBody
+    List<Musician> loadMusicians(){
+        return musicianService.getAll();
     }
 }

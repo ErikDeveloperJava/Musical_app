@@ -1,18 +1,16 @@
 package net.musicalWorld.service;
 
-import net.musicalWorld.model.Musician;
+import net.musicalWorld.model.Album;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public interface MusicianService {
+public interface AlbumService {
 
-    void add(Musician musician, MultipartFile image);
+    void add(Album album, MultipartFile image);
 
-    List<Musician> getAll(Pageable pageable);
-
-    List<Musician> getAll();
+    List<Album> getAll(Pageable pageable);
 
     int count();
 

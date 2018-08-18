@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    var token = $("#frsc").attr("content");
+
     $(".musician-input").on("input",function (event) {
         var name = $(this).attr("name");
         var value = $(this).val();
@@ -11,6 +13,24 @@ $(document).ready(function () {
             var name = $(input).attr("name");
             var value = $(input).val();
             isValidData(name,value,event);
+        })
+    });
+
+    $(document).on("click",".delete-musician",function (event) {
+        event.preventDefault();
+        var musicianId = $(this).attr("id");
+        $.ajax({
+            type: "POST",
+            url: "/admin/musician/delete/" + musicianId,
+            data: {_csrf: token},
+            success: function (data) {
+                if(data){
+                    loadMusicians($(".current").text())
+                }
+            },
+            error: function () {
+                window.location = "/error";
+            }
         })
     })
 });
@@ -63,4 +83,18 @@ function isValidData(name, value, event) {
             };
             break;
     }
+};
+function loadMusicians(page) {
+    $.ajax({
+        type: "GET",
+        url: "/musicians",
+        data: {page: page,token: "load"},
+        success: function (data) {
+            $("#musicians-blog").empty();
+            $("#musicians-blog").html(data);
+        },
+        error: function () {
+            window.location = "/error";
+        }
+    })
 }

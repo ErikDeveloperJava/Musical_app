@@ -1,0 +1,79 @@
+<div class="row" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- BEGIN content -->
+
+    <div class="col-md-12">
+        <content>
+
+            <div class="row content-row">
+                <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index < 3}">
+                    <div class="col-md-4">
+                        <a  class="delete-musician" th:id="${musician.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img   th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                            <div class="album-caption">
+                                <h4>
+                                    <a style="cursor: pointer" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                </h4>
+                                <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="row content-row">
+
+                <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index >= 3}">
+                    <div class="col-md-4">
+                        <a class="delete-musician" th:id="${musician.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                            <div class="album-caption">
+                                <h4>
+                                    <a style="cursor: pointer" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                </h4>
+                                <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+        </content>
+
+    </div>
+
+</div>
+<span class="clear"></span>
+
+<nav data-pagination style="position:relative;top: 40px" xmlns:th="http://www.thymeleaf.org">
+    <a th:if="${pageNumber eq 0}" disabled>
+        <img th:src="@{/resources/icons/pagination-previous.png}">
+    </a>
+    <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber})}" >
+        <img th:src="@{/resources/icons/pagination-previous.png}">
+    </a>
+    <ul>
+        <th:block th:each="i : ${#numbers.sequence(1,length)}">
+            <li th:if="${(i-1)} ne ${pageNumber}">
+                <a th:href="@{${#request.getRequestURI()}(page = ${i})}" th:text="${i}">2</a>
+            </li>
+            <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                <a  th:text="${i}">2</a>
+            </li>
+        </th:block>
+    </ul>
+    <a th:if="${pageNumber} eq ${length - 1}" disabled>
+        <img th:src="@{/resources/icons/pagination-next.png}">
+    </a>
+    <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2})}">
+        <img th:src="@{/resources/icons/pagination-next.png}">
+    </a>
+</nav>

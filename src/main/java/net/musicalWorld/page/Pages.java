@@ -17,4 +17,16 @@ public interface Pages {
     String NEWS = "news";
 
     String MUSICIAN_ADD = "admin/musician_add";
+
+    String NEWS_JS = "news_js";
+
+    String MUSICIANS = "musicians";
+
+    String MUSICIAN_JS = "musicians_js";
+
+    String ALBUM_ADD = "admin/album_add";
+
+    String ALBUMS = "albums";
+
+    String ALBUMS_JS = "albums_js";
 }

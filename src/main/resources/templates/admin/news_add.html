@@ -13,14 +13,13 @@
     <meta id="description-error" th:content="#{description.error}">
     <meta id="image-error" th:content="#{image.error}">
 
-    <title th:text="#{login}">Login</title>
+    <title th:text="#{news.add}">Login</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link th:href="@{/resources/css/style.css}" rel="stylesheet">
-    <link th:href="@{/resources/css/search-style.css}" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
           rel='stylesheet' type='text/css'>
@@ -66,6 +65,10 @@
                class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
+            <form th:action="@{/logout}" method="post">
+                <input style="background: none;
+                            border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+            </form>
         </div>
     </div>
 </header>
@@ -105,7 +108,7 @@
                                 <a th:href="@{/admin/musician/add}" th:text="#{add.musician}">add musicians</a>
                             </li>
                             <li>
-                                <a th:href="@{/admin/musician/add}" th:text="#{add.album}">add album</a>
+                                <a th:href="@{/admin/album/add}" th:text="#{add.album}">add album</a>
                             </li>
                             <li>
                                 <a th:href="@{/admin/music/add}" th:text="#{add.music}">add music</a>
@@ -122,17 +125,12 @@
                         </ul>
                     </li>
                     <li>
-                        <a th:href="@{/admin/main/change}">Change Main page</a>
+                        <a th:href="@{/admin/main/change}" th:text="#{change.main.page}">Change Main page</a>
                     </li>
                     <li>
                         <a th:href="@{/admin/category/add}" th:text="#{add.category}">Add category</a>
                     </li>
-                    <li>
-                        <form th:action="@{/logout}" method="post">
-                            <input style="background: none;
-                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
-                        </form>
-                    </li>
+
                 </ul>
             </nav>
         </header>

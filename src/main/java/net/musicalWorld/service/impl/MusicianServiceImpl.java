@@ -1,15 +1,23 @@
 package net.musicalWorld.service.impl;
 
+import net.musicalWorld.model.Album;
+import net.musicalWorld.model.Music;
 import net.musicalWorld.model.Musician;
+import net.musicalWorld.repository.AlbumRepository;
+import net.musicalWorld.repository.MusicRepository;
 import net.musicalWorld.repository.MusicianRepository;
 import net.musicalWorld.service.MusicianService;
 import net.musicalWorld.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,6 +27,12 @@ public class MusicianServiceImpl implements MusicianService {
 
     @Autowired
     private FileUtil fileUtil;
+
+    @Autowired
+    private MusicRepository musicRepository;
+
+    @Autowired
+    private AlbumRepository albumRepository;
 
     @Autowired
     private MusicianRepository musicianRepository;
@@ -34,5 +48,35 @@ public class MusicianServiceImpl implements MusicianService {
         }catch (Exception e){
             fileUtil.deleteImg("musicians\\" + musician.getId());
         }
+    }
+
+    @Override
+    public List<Musician> getAll(Pageable pageable) {
+        return musicianRepository.findAll(PageRequest.of(pageable.getPageNumber(),6)).getContent();
+    }
+
+    @Override
+    public List<Musician> getAll() {
+        return musicianRepository.findAll();
+    }
+
+    @Override
+    public int count() {
+        return (int) musicianRepository.count();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(int id) {
+        List<Album> albums = albumRepository.findAllByMusicianId(id);
+        for (Album album : albums) {
+            List<Music> musicList = musicRepository.findAllByAlbumId(album.getId());
+            for (Music music : musicList) {
+                fileUtil.deleteMusic(music.getId() + "");
+            }
+            fileUtil.deleteImg("albums\\" + album.getId());
+        }
+        musicianRepository.deleteById(id);
+        fileUtil.deleteImg("musicians\\" + id);
+        LOGGER.debug("musician deleted");
     }
 }

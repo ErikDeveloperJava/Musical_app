@@ -1,5 +1,6 @@
 package net.musicalWorld.util;
 
+import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -47,7 +48,7 @@ public class FileUtil {
             }
         }
         try {
-            FileOutputStream out = new FileOutputStream(new File(file,img));
+            @Cleanup FileOutputStream out = new FileOutputStream(new File(file,img));
             out.write(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(),e);
@@ -62,7 +63,7 @@ public class FileUtil {
             }
         }
         try {
-            FileOutputStream out = new FileOutputStream(new File(file,img));
+            @Cleanup FileOutputStream out = new FileOutputStream(new File(file,img));
             out.write(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(),e);

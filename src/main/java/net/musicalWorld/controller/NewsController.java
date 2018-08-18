@@ -57,14 +57,14 @@ public class NewsController implements Pages {
     }
 
     @GetMapping("/news")
-    public String news(Pageable pageable, Model model){
+    public String news(Pageable pageable, Model model,@RequestParam(value = "token",required = false,defaultValue = "NONE")String token){
         int count = newsService.count();
         int length = PageableUtil.getLength(count, pageable.getPageSize());
         pageable = PageableUtil.getChecked(pageable,length);
         model.addAttribute("allNews",newsService.getAll(pageable));
         model.addAttribute("length",length);
         model.addAttribute("pageNumber",pageable.getPageNumber());
-        return NEWS;
+        return token.equals("NONE") ? NEWS : NEWS_JS;
     }
 
     @PostMapping("/admin/news/delete")

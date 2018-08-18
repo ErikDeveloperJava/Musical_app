@@ -1,0 +1,53 @@
+<div class="col-md-8" xmlns:th="http://www.thymeleaf.org">
+    <content>
+
+        <ul class="news-list half-image">
+            <th:block th:each="news : ${allNews}">
+                <li th:id="${news.id}">
+                    <a style="cursor: pointer" class="image-wrap">
+                        <img width="300px" height="150px" th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}" alt="demo image">
+                    </a>
+                    <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                        <a th:text="${news.title}">title</a>
+                    </h4>
+                    <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                        <a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">title</a>
+                    </h4>
+                    <p th:if="${#strings.length(news.description) <= 300}" th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">description</p>
+                    <p th:if="${#strings.length(news.description) > 300}" th:text="${#strings.substring(news.description,0,300)} + '...'">description</p>
+                    <div class="meta-line">
+                        <span class="post-date" th:text="${#dates.format(news.createdDate,'dd.MM.yyyy')}">date</span>
+                        <a style="color: #953b39" th:unless="${#strings.equals(user.role,'ADMIN')}" class="more-link"
+                           th:href="@{/news/{id}(id = ${news.id})}" th:text="#{read.more}">Read More</a>
+                        <a style="color: #953b39" th:if="${#strings.equals(user.role,'ADMIN')}" class="more-link delete-news"
+                           th:href="@{/admin/news/delete/{id}(id = ${news.id})}"  th:text="#{delete}">delete</a>
+                    </div>
+                </li>
+            </th:block>
+        </ul>
+    </content>
+    <nav data-pagination>
+        <a th:if="${pageNumber eq 0}" disabled>
+            <img th:src="@{/resources/icons/pagination-previous.png}">
+        </a>
+        <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber})}" >
+            <img th:src="@{/resources/icons/pagination-previous.png}">
+        </a>
+        <ul>
+            <th:block th:each="i : ${#numbers.sequence(1,length)}">
+                <li th:if="${(i-1)} ne ${pageNumber}">
+                    <a th:href="@{${#request.getRequestURI()}(page = ${i})}" th:text="${i}">2</a>
+                </li>
+                <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                    <a  th:text="${i}">2</a>
+                </li>
+            </th:block>
+        </ul>
+        <a th:if="${pageNumber} eq ${length - 1}" disabled>
+            <img th:src="@{/resources/icons/pagination-next.png}">
+        </a>
+        <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2})}">
+            <img th:src="@{/resources/icons/pagination-next.png}">
+        </a>
+    </nav>
+</div>

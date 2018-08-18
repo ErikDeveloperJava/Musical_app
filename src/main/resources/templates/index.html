@@ -71,6 +71,11 @@
                class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
+
+            <form th:if="${#strings.equals(user.role,'USER')}" th:action="@{/logout}" method="post">
+                <input style="background: none;
+                            border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+            </form>
         </div>
     </div>
 </header>
@@ -130,12 +135,6 @@
                     </li>
                     <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
                         <a th:href="@{/register}" th:text="#{register}">Register</a>
-                    </li>
-                    <li th:if="${#strings.equals(user.role,'USER')}">
-                        <form th:action="@{/logout}" method="post">
-                            <input style="background: none;
-                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
-                        </form>
                     </li>
                 </ul>
             </nav>
@@ -294,7 +293,7 @@
                                 <th:block th:each="musician : ${main.musicianList}">
                                     <li>
                                         <a href="index.html#" class="image-wrap">
-                                            <img th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}"
+                                            <img height="50px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}"
                                                  alt="demo image">
                                             <span class="image-details"></span>
                                         </a>
@@ -321,7 +320,7 @@
                                 <th:block th:each="album : ${main.albumList}">
                                     <li>
                                         <a href="index.html#" class="image-wrap">
-                                            <img th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                            <img height="50px" th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
                                                  alt="demo image">
                                             <span class="image-details"></span>
                                         </a>

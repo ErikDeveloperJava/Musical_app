@@ -68,6 +68,10 @@
                class="player-button" th:href="@{${#request.getRequestURI()}(lang = 'arm')}">
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
+            <form th:action="@{/logout}" method="post">
+                <input style="background: none;
+                            border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+            </form>
         </div>
     </div>
 </header>
@@ -109,7 +113,7 @@
                                 <a th:href="@{/admin/musician/add}" th:text="#{add.musician}">add musicians</a>
                             </li>
                             <li>
-                                <a th:href="@{/admin/musician/add}" th:text="#{add.album}">add album</a>
+                                <a th:href="@{/admin/album/add}" th:text="#{add.album}">add album</a>
                             </li>
                             <li>
                                 <a th:href="@{/admin/music/add}" th:text="#{add.music}">add music</a>
@@ -126,17 +130,12 @@
                         </ul>
                     </li>
                     <li>
-                        <a th:href="@{/admin/main/change}">Change Main page</a>
+                        <a th:href="@{/admin/main/change}" th:text="#{change.main.page}">Change Main page</a>
                     </li>
                     <li>
                         <a th:href="@{/admin/category/add}" th:text="#{add.category}">Add category</a>
                     </li>
-                    <li>
-                        <form th:action="@{/logout}" method="post">
-                            <input style="background: none;
-                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
-                        </form>
-                    </li>
+
                 </ul>
             </nav>
         </header>
