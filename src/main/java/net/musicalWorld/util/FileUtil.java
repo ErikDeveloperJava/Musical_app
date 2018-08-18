@@ -88,6 +88,7 @@ public class FileUtil {
             for (File f : file.listFiles()) {
                 delete(f);
             }
+            file.delete();
         }else {
             file.delete();
         }

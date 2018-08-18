@@ -37,9 +37,10 @@
 
 <!-- BEGIN top bar -->
 
-<header class="top-bar">
+<header class="top-bar" style="height: 45px">
     <div th:if="${#strings.equals(user.role,'USER')}"
-         class="full-width-info left"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+         class="full-width-info left">
+        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
         <a id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
     </div>
     <div class="full-width-info right">
@@ -223,13 +224,15 @@
                             <div class="col-md-6">
                                 <section class="featured-post">
                                     <a class="image-wrap" href="index.html#">
-                                        <img th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
+                                        <img height="180px"  th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
                                              alt="demo image">
-                                        <span class="image-details"></span>
                                     </a>
                                     <h1><a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">Title</a>
                                     </h1>
-                                    <p th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                    <p th:if="${#strings.length(news.description) <= 300}" th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                        Description
+                                    </p>
+                                    <p th:if="${#strings.length(news.description) > 300}" th:text="${#strings.substring(news.description,0,300)} + '...'">
                                         Description
                                     </p>
                                     <div class="bluebox-info-line">
@@ -249,13 +252,16 @@
                             <div class="col-md-6">
                                 <section class="featured-post">
                                     <a class="image-wrap" href="index.html#">
-                                        <img th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
+                                        <img height="180px" th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}"
                                              alt="demo image">
                                         <span class="image-details"></span>
                                     </a>
                                     <h1><a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">Title</a>
                                     </h1>
-                                    <p th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                    <p th:if="${#strings.length(news.description) <= 300}" th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">
+                                        Description
+                                    </p>
+                                    <p th:if="${#strings.length(news.description) > 300}" th:text="${#strings.substring(news.description,0,300)} + '...'">
                                         Description
                                     </p>
                                     <div class="bluebox-info-line">

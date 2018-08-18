@@ -7,20 +7,22 @@
     <meta name="author" content="">
     <meta id="frsc" th:content="${_csrf.token}">
 
-    <title th:text="#{admin}">Admin</title>
+
+    <title th:text="#{news}">News</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link th:href="@{/resources/css/style.css}" rel="stylesheet">
+    <link th:unless="${#strings.equals(user.role,'ADMIN')}" th:href="@{/resources/css/search-style.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/pagination-style.css}" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
           rel='stylesheet' type='text/css'>
 
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link th:href="@{/resources/js/swiperjs/idangerous.swiper.css}" rel="stylesheet">
-
 
     <!-- Client side less compiling
     <link rel="stylesheet/less" type="text/css" href="style.less">-->
@@ -37,8 +39,10 @@
 <!-- BEGIN top bar -->
 
 <header class="top-bar" style="height: 45px">
-    <div class="full-width-info left">
+    <div th:unless="${#strings.equals(user.role,'ROLE_ANONYMOUS')}"
+         class="full-width-info left">
         <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+        <a th:if="${#strings.equals(user.role,'USER')}" id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
     </div>
     <div class="full-width-info right">
         <!--<a href="#">Login </a>/ <a href="#">Subscribe </a>/ <a href="#">Checkout</a>--></div>
@@ -71,6 +75,7 @@
         </div>
     </div>
 </header>
+
 <!-- END top bar -->
 
 <!-- BEGIN banner area -->
@@ -78,26 +83,76 @@
 <div class="top-banner-area">
     <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
     <div class="event-counter bbox-countdown-timer">
+
+        <form th:unless="${#strings.equals(user.role,'ADMIN')}" th:action="@{/music/search}" role="search" method="post" class="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
+                   autocomplete="off">
+        </form>
     </div>
 </div>
 
-<!-- END banner area -->
-
 <div class="content-wrap">
     <div class="main-container">
-        <header>
+        <header th:unless="${#strings.equals(user.role,'ADMIN')}">
             <nav>
-                <ul>
+                <ul style="font-size: 9px">
+                    <li class="sub-nav">
+                        <a href="/">
+                            <i class="icon-home"></i>
+                            <span th:text="#{home}">Home</span>
+                        </a>
+                    </li>
                     <li class="current-item">
-                        <a href="/"><i class="icon-home"></i><span th:text="#{home}">Home</span></a>
+                        <a th:href="@{/news}" th:text="#{news}">News</a>
                     </li>
                     <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{categories}">Categories</a>
+                        <ul id="category-ul"></ul>
+                    </li>
+                    <li class="subnav">
+                        <a style="cursor: pointer" th:text="#{other}">other</a>
+                        <ul>
+                            <li>
+                                <a th:href="@{/music}" th:text="#{music}">music</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/musicians}" th:text="#{musicians}">musicians</a>
+                            </li>
+                            <li>
+                                <a th:href="@{/albums}" th:text="#{albums}">albums</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/login}" th:text="#{login}">Login</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'ROLE_ANONYMOUS')}">
+                        <a th:href="@{/register}" th:text="#{register}">Register</a>
+                    </li>
+                    <li th:if="${#strings.equals(user.role,'USER')}">
+                        <form th:action="@{/logout}" method="post">
+                            <input style="background: none;
+                            border :none;position: relative;top: 20px;left: 10px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <header th:if="${#strings.equals(user.role,'ADMIN')}">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="/"><i class="icon-home"></i><span th:text="#{home}">Home</span></a>
+                    </li>
+                    <li class="subnav current-item">
                         <a style="cursor: pointer" th:text="#{news}">News</a>
                         <ul>
                             <li>
                                 <a th:href="@{/admin/news/add}" th:text="#{news.add}">add news</a>
                             </li>
-                            <li>
+                            <li class="current-item">
                                 <a th:href="@{/news}" th:text="#{all.news}">all news</a>
                             </li>
                         </ul>
@@ -162,31 +217,61 @@
             <div class="col-md-8">
                 <content>
 
-                    <div class="events-list events-page">
-                        <th:block th:each="u : ${users}" th:if="${user.id} ne ${u.id}">
-
-                            <section th:id="${u.id}" class="event">
-                                <div class="date">
-                                    <img th:src="@{/resources/images/users/{img}(img = ${u.imgUrl})}">
+                    <ul class="news-list half-image">
+                        <th:block th:each="news : ${allNews}">
+                            <li th:id="${news.id}">
+                                <a style="cursor: pointer" class="image-wrap">
+                                    <img width="300px" height="150px" th:src="@{/resources/images/news/{img}(img = ${news.imgUrl})}" alt="demo image">
+                                </a>
+                                <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                                    <a th:text="${news.title}">title</a>
+                                </h4>
+                                <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                                    <a th:href="@{/news/{id}(id = ${news.id})}" th:text="${news.title}">title</a>
+                                </h4>
+                                <p th:if="${#strings.length(news.description) <= 300}" th:text="${#strings.substring(news.description,0,(#strings.length(news.description)/2))} + '...'">description</p>
+                                <p th:if="${#strings.length(news.description) > 300}" th:text="${#strings.substring(news.description,0,300)} + '...'">description</p>
+                                <div class="meta-line">
+                                    <span class="post-date" th:text="${#dates.format(news.createdDate,'dd.MM.yyyy')}">date</span>
+                                    <a style="color: #953b39" th:unless="${#strings.equals(user.role,'ADMIN')}" class="more-link"
+                                       th:href="@{/news/{id}(id = ${news.id})}" th:text="#{read.more}">Read More</a>
+                                    <a style="color: #953b39" th:if="${#strings.equals(user.role,'ADMIN')}" class="more-link delete-news"
+                                       th:href="@{/admin/news/delete/{id}(id = ${news.id})}"  th:text="#{delete}">delete</a>
                                 </div>
-                                <div class="details">
-                                    <h1 th:text="${u.name} + ' ' + ${u.surname}">name surname</h1>
-                                    <div class="buttons">
-                                        <a th:title="${u.id}" class="default" style="cursor: pointer" th:text="#{delete}">Delete</a>
-                                    </div>
-                                </div>
-                            </section>
-
+                            </li>
                         </th:block>
-                    </div>
-
+                    </ul>
                 </content>
+                <nav data-pagination>
+                    <a th:if="${pageNumber eq 0}" disabled>
+                        <img th:src="@{/resources/icons/pagination-previous.png}">
+                    </a>
+                    <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber})}" >
+                        <img th:src="@{/resources/icons/pagination-previous.png}">
+                    </a>
+                    <ul>
+                        <th:block th:each="i : ${#numbers.sequence(1,length)}">
+                            <li th:if="${(i-1)} ne ${pageNumber}">
+                                <a th:href="@{${#request.getRequestURI()}(page = ${i})}" th:text="${i}">2</a>
+                            </li>
+                            <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                                <a  th:text="${i}">2</a>
+                            </li>
+                        </th:block>
+                    </ul>
+                    <a th:if="${pageNumber} eq ${length - 1}" disabled>
+                        <img th:src="@{/resources/icons/pagination-next.png}">
+                    </a>
+                    <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2})}">
+                        <img th:src="@{/resources/icons/pagination-next.png}">
+                    </a>
+                </nav>
             </div>
+
+
         </div>
+
     </div>
-
-    <!-- BEGIN footer -->
-
 
     <footer>
 
@@ -248,13 +333,12 @@
     </div>
 </div>
 
+<noscript th:text="#{no.script.msg}"></noscript>
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script th:src="@{/resources/bootstrap-3.0.0/assets/js/jquery.js}"></script>
 <script th:src="@{/resources/bootstrap-3.0.0/dist/js/bootstrap.min.js}"></script>
-
-
 <script type="text/javascript" th:src="@{/resources/js/jquery-1.10.2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/js/jquery-ui-1.10.3.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/js/custom.js}"></script>
@@ -262,8 +346,8 @@
 <script type="text/javascript" th:src="@{/resources/js/swiperjs/idangerous.swiper.js}"></script>
 <script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
 <script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
-<script th:src="@{/resources/js/musical/admin.js}"></script>
-<script th:src="@{/resources/js/musical/user.js}"></script>
-
+<script th:unless="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/generic.js}"></script>
+<script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/admin.js}"></script>
+<script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/news.js}"></script>
 </body>
 </html>

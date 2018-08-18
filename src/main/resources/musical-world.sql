@@ -2,7 +2,6 @@ create database musical_world character set utf8 collate utf8_general_ci;
 
 use musical_world;
 
-#create table user
 create table user(
   id int not null auto_increment primary key ,
   name varchar(255) not null ,
@@ -13,7 +12,6 @@ create table user(
   img_url varchar(255) not null
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table news
 create table news(
   id int not null auto_increment primary key ,
   title varchar(255) not null ,
@@ -22,7 +20,6 @@ create table news(
   created_date datetime not null
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table comment
 create table comment(
   id int not null auto_increment primary key ,
   comment text not null ,
@@ -35,7 +32,6 @@ create table comment(
   foreign key (parent_id) references comment(id) on delete cascade
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table category
 create table category(
   id int not null auto_increment primary key ,
   name_en varchar(255) not null ,
@@ -43,7 +39,6 @@ create table category(
   name_arm varchar(255) not null
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table music
 create table music(
   id int not null auto_increment primary key ,
   name varchar(255) not null ,
@@ -51,7 +46,6 @@ create table music(
   year int(4) not null
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table category_music
 create table category_music(
   category_id int not null ,
   music_id int not null ,
@@ -59,7 +53,6 @@ create table category_music(
   foreign key (music_id) references music(id) on delete cascade
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table bookmark
 create table bookmark(
   user_id int not null ,
   music_id int not null ,
@@ -67,7 +60,6 @@ create table bookmark(
   foreign key (music_id) references music(id) on delete cascade
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table musician
 create table musician(
   id int not null auto_increment primary key ,
   name varchar(255) not null ,
@@ -77,7 +69,6 @@ create table musician(
   img_url varchar(255) not null
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table album
 create table album(
   id int not null auto_increment primary key ,
   name varchar(255) not null ,
@@ -88,7 +79,6 @@ create table album(
   foreign key (musician_id) references musician(id) on delete cascade
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table album_music
 create table album_music(
   album_id int not null ,
   music_id int not null ,
@@ -96,7 +86,6 @@ create table album_music(
   foreign key (music_id) references music(id) on delete cascade
 )engine InnoDB character set utf8 collate utf8_general_ci;
 
-#create table home
 create table home(
   id int not null auto_increment primary key ,
   home_img varchar(255) not null ,
@@ -118,3 +107,5 @@ insert into category(name_en, name_ru, name_arm) values
   ('Dubstep','Дабстеп','Դուբստեպ'),
   ('Pop','Поп','Փոփ');
 
+insert into user(name, surname, username, password, role, img_url) VALUES
+  ('Admin','Admin','admin','$2a$04$J3JfeJDUEG3iOundNgood.mbNnyh7IE0DJl4HT08Sba.0RtkcXeBu','ADMIN','admin/Beagle-On-White-01-400x267.jpg');

@@ -5,35 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta id="username-error" th:content="#{username.error}">
+    <meta id="password-error" th:content="#{password.error}">
     <meta id="frsc" th:content="${_csrf.token}">
+    <meta id="lang" th:content="${#locale.language}">
+    <meta id="title-error" th:content="#{title.error}">
+    <meta id="description-error" th:content="#{description.error}">
+    <meta id="image-error" th:content="#{image.error}">
 
-    <title th:text="#{admin}">Admin</title>
+    <title th:text="#{login}">Login</title>
 
     <!-- Bootstrap core CSS -->
     <link th:href="@{/resources/bootstrap-3.0.0/dist/css/bootstrap.css}" rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link th:href="@{/resources/css/style.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/search-style.css}" rel="stylesheet">
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;subset=latin,cyrillic-ext,cyrillic'
           rel='stylesheet' type='text/css'>
 
     <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <link th:href="@{/resources/js/swiperjs/idangerous.swiper.css}" rel="stylesheet">
+    <link th:href="@{/resources/js/big-video/css/bigvideo.css}" rel="stylesheet">
 
-
-    <!-- Client side less compiling
-    <link rel="stylesheet/less" type="text/css" href="style.less">-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="/resources/bootstrap-3.0.0/assets/js/html5shiv.js"></script>
-    <script src="/resources/bootstrap-3.0.0/assets/js/respond.min.js"></script>
-    <![endif]-->
 </head>
 
 <body id="body">
-
 <!-- BEGIN top bar -->
 
 <header class="top-bar" style="height: 45px">
@@ -81,20 +79,18 @@
     </div>
 </div>
 
-<!-- END banner area -->
-
 <div class="content-wrap">
     <div class="main-container">
         <header>
             <nav>
                 <ul>
-                    <li class="current-item">
+                    <li>
                         <a href="/"><i class="icon-home"></i><span th:text="#{home}">Home</span></a>
                     </li>
-                    <li class="subnav">
+                    <li class="subnav current-item">
                         <a style="cursor: pointer" th:text="#{news}">News</a>
                         <ul>
-                            <li>
+                            <li class="current-item">
                                 <a th:href="@{/admin/news/add}" th:text="#{news.add}">add news</a>
                             </li>
                             <li>
@@ -140,7 +136,6 @@
                 </ul>
             </nav>
         </header>
-
         <!-- BEGIN mobile nav -->
 
         <select class="bb-mobile-nav">
@@ -161,37 +156,39 @@
 
             <div class="col-md-8">
                 <content>
-
-                    <div class="events-list events-page">
-                        <th:block th:each="u : ${users}" th:if="${user.id} ne ${u.id}">
-
-                            <section th:id="${u.id}" class="event">
-                                <div class="date">
-                                    <img th:src="@{/resources/images/users/{img}(img = ${u.imgUrl})}">
-                                </div>
-                                <div class="details">
-                                    <h1 th:text="${u.name} + ' ' + ${u.surname}">name surname</h1>
-                                    <div class="buttons">
-                                        <a th:title="${u.id}" class="default" style="cursor: pointer" th:text="#{delete}">Delete</a>
-                                    </div>
-                                </div>
-                            </section>
-
-                        </th:block>
-                    </div>
-
+                    <form method="post" th:action="@{/admin/news/add}" id="news-form"
+                          class="bluebox-contact" th:object="${form}" enctype="multipart/form-data">
+                        <div class="contact-form-inputs">
+                            <div class="input-wrap-text input-name">
+                                <span th:if="${#fields.hasErrors('title')}" id="titleError" style="color: red" th:text="#{title.error}"></span>
+                                <span th:unless="${#fields.hasErrors('title')}" id="titleError" style="color: red"></span>
+                                <input class="input news-input" style="border:1px solid #357ebd" type="text" th:field="*{title}" th:placeholder="#{title}" id="title" data-default-label="Name *">
+                            </div>
+                            <div class="input-wrap-textarea input-message">
+                                <span th:if="${#fields.hasErrors('description')}" id="descriptionError" style="color: red" th:text="#{description.error}"></span>
+                                <span th:unless="${#fields.hasErrors('description')}" id="descriptionError" style="color: red"></span>
+                                <textarea style="border:1px solid #357ebd" data-default-label="Message *" rows="6" class="news-input" id="description" th:field="*{description}" th:placeholder="#{description}"></textarea>
+                            </div>
+                            <div class="input-wrap-text input-email">
+                                <span id="imageError" style="color: red" th:if="${#fields.hasErrors('image')}" th:text="#{image.error}"></span>
+                                <span id="imageError" style="color: red" th:unless="${#fields.hasErrors('image')}"></span>
+                                <br/>
+                                <input  type="file" th:field="*{image}" id="file" class="inputfile news-input" />
+                                <label style="cursor: pointer" for="file" th:text="#{choose.photo}">Choose a photo</label><br/>
+                            </div>
+                        </div>
+                        <div>
+                            <input type="submit" class="default-button" data-title="Submit"
+                                   data-action-title="Sending..." th:value="#{add}">
+                        </div>
+                    </form>
                 </content>
             </div>
         </div>
+        <span class="clear"></span>
     </div>
-
-    <!-- BEGIN footer -->
-
-
     <footer>
-
         <div class="row">
-
             <div class="col-md-4">
                 <div class="bluebox-heading">
                     <h3 th:text="#{about.us}">About us</h3>
@@ -200,10 +197,8 @@
                 </span>
                 <span class="clear"></span>
             </div>
-
             <div class="col-md-4">
             </div>
-
             <div class="col-md-4">
                 <div class="bluebox-heading">
                     <h3 th:text="#{social}">Social</h3>
@@ -241,12 +236,14 @@
         </div>
     </footer>
 
-    <!-- END footer -->
-
     <div class="copyrights-content">
         M U S I C A L ____________ W O R L D
     </div>
 </div>
+
+<!-- END sticky player -->
+<noscript th:text="#{no.script.msg}"></noscript>
+
 
 <!-- Bootstrap core JavaScript
 ================================================== -->
@@ -263,7 +260,6 @@
 <script th:src="@{/resources/js/modernizr-2.5.3.min.js}"></script>
 <script th:src="@{/resources/js/imagesloaded.pkgd.js}"></script>
 <script th:src="@{/resources/js/musical/admin.js}"></script>
-<script th:src="@{/resources/js/musical/user.js}"></script>
-
+<script th:src="@{/resources/js/musical/news.js}"></script>
 </body>
 </html>

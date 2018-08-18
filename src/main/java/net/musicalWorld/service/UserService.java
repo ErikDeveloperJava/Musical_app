@@ -8,4 +8,6 @@ public interface UserService {
     void save(User user, MultipartFile image);
 
     boolean existsByUsername(String username);
+
+    void deleteById(int id);
 }

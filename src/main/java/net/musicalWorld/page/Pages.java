@@ -11,4 +11,10 @@ public interface Pages {
     String LOGIN = "login";
 
     String REGISTER = "register";
+
+    String NEWS_ADD = "admin/news_add";
+
+    String NEWS = "news";
+
+    String MUSICIAN_ADD = "admin/musician_add";
 }

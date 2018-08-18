@@ -41,4 +41,11 @@ public class UserServiceImpl implements UserService {
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(int id) {
+        userRepository.deleteById(id);
+        fileUtil.deleteImg("users\\" + id);
+        LOGGER.debug("user deleted");
+    }
 }
