@@ -7,6 +7,7 @@
     <meta name="author" content="">
     <meta id="frsc" th:content="${_csrf.token}">
     <meta id="lang" th:content="${#locale.language}">
+    <meta id="search-msg" th:content="#{saerch.font}">
 
     <title th:text="#{musicians}">Musicians</title>
     <title th:text="#{musical.world}">Musical world</title>
@@ -34,7 +35,8 @@
 <header class="top-bar" style="height: 45px">
     <div th:unless="${#strings.equals(user.role,'ROLE_ANONYMOUS')}"
          class="full-width-info left">
-        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}">
+        <span th:text="${user.name} + './'">name surname /</span>
         <a th:if="${#strings.equals(user.role,'USER')}" id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
     </div>
     <div class="full-width-info right">
@@ -66,7 +68,7 @@
                 <img th:src="@{/resources/icons/armenia.png}">
             </a>
 
-            <form th:action="@{/logout}" method="post">
+            <form th:unless="${#strings.equals(user.role,'ROLE_ANONYMOUS')}" th:action="@{/logout}" method="post">
                 <input style="background: none;
                             border :none;position: relative;left: 120px;top:-24px;font-weight:700;font-size: 18px;color: black" type="submit" th:value="#{logout}">
             </form>
@@ -82,7 +84,7 @@
     <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
     <div class="event-counter bbox-countdown-timer">
 
-        <form th:unless="${#strings.equals(user.role,'ADMIN')}" th:action="@{/music/search}" role="search" method="post" class="search-form">
+        <form th:unless="${#strings.equals(user.role,'ADMIN')}" th:action="@{/music/search}" role="search"  class="search-form">
             <input type="submit" value="" class="search-submit">
             <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
                    autocomplete="off">
@@ -189,7 +191,6 @@
             </nav>
         </header>
 
-
         <!-- BEGIN mobile nav -->
 
         <select class="bb-mobile-nav">
@@ -203,7 +204,16 @@
         <span class="clear"></span>
 
         <!-- BEGIN page content -->
+        <h2 id="result" style="color: #953b39;position: relative;left: 300px;top: -30px" th:text="#{musicians}">musicians</h2>
         <div id="musicians-blog">
+            <div style="position: relative;top: -30px">
+                <form th:unless="${#strings.equals(user.role,'ADMIN')}" th:action="@{/musician/search}" role="search" method="post"
+                      id="search-form">
+                    <input type="submit" value="" class="search-submit">
+                    <input type="search" id="name" name="name" class="search-text" th:placeholder="#{search.musician} + '...'"
+                           autocomplete="off">
+                </form>
+            </div>
             <div class="row">
 
                 <!-- BEGIN content -->
@@ -375,6 +385,7 @@
 <script th:unless="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/generic.js}"></script>
 <script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/musician.js}"></script>
 <script th:if="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/admin.js}"></script>
+<script th:unless="${#strings.equals(user.role,'ADMIN')}" th:src="@{/resources/js/musical/musician-search.js}"></script>
 
 </body>
 </html>

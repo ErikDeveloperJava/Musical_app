@@ -59,4 +59,19 @@ public class NewsServiceImpl implements NewsService {
         fileUtil.deleteImg("news\\" + id);
         LOGGER.debug("news saved");
     }
+
+    @Override
+    public News getById(int id) {
+        return newsRepository.findById(id).get();
+    }
+
+    @Override
+    public boolean existsById(int id) {
+        return newsRepository.existsById(id);
+    }
+
+    @Override
+    public List<News> getTop5AndUnlessId(int id) {
+        return newsRepository.findTop5AndUnlessId(id,PageRequest.of(0,5,Sort.by(Sort.Direction.DESC,"createdDate")));
+    }
 }

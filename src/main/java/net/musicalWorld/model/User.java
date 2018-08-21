@@ -1,5 +1,6 @@
 package net.musicalWorld.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import net.musicalWorld.model.enums.UserRole;
 
@@ -31,7 +32,8 @@ public class User {
 
     private String imgUrl;
 
-    @ManyToMany
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "bookmark",joinColumns = @JoinColumn(name = "user_id"),
     inverseJoinColumns = @JoinColumn(name = "music_id"))
     private List<Music> musicList;

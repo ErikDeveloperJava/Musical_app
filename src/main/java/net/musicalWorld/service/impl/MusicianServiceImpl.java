@@ -3,6 +3,7 @@ package net.musicalWorld.service.impl;
 import net.musicalWorld.model.Album;
 import net.musicalWorld.model.Music;
 import net.musicalWorld.model.Musician;
+import net.musicalWorld.page.MusicianDetail;
 import net.musicalWorld.repository.AlbumRepository;
 import net.musicalWorld.repository.MusicRepository;
 import net.musicalWorld.repository.MusicianRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -78,5 +80,37 @@ public class MusicianServiceImpl implements MusicianService {
         musicianRepository.deleteById(id);
         fileUtil.deleteImg("musicians\\" + id);
         LOGGER.debug("musician deleted");
+    }
+
+    @Override
+    public MusicianDetail getDetailById(int id) {
+        List<Album> albums = albumRepository.findAllByMusicianId(id);
+        List<Music> musicList = new ArrayList<>();
+        for (Album album : albums) {
+            Music music = musicRepository.findFirstByAlbums_Id(album.getId());
+            if(music != null){
+                musicList.add(music);
+            }
+        }
+        return MusicianDetail.builder()
+                .musician(musicianRepository.findById(id).get())
+                .albums(albums)
+                .musicList(musicList)
+                .build();
+    }
+
+    @Override
+    public boolean existsById(int id) {
+        return musicianRepository.existsById(id);
+    }
+
+    @Override
+    public int countByNameContains(String name) {
+        return musicianRepository.countByNameContains(name);
+    }
+
+    @Override
+    public List<Musician> getAllByNameContains(String name, Pageable pageable) {
+        return musicianRepository.findAllByNameContains(name,PageRequest.of(pageable.getPageNumber(),6));
     }
 }

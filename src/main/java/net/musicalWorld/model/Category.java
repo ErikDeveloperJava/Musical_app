@@ -2,6 +2,8 @@ package net.musicalWorld.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -17,10 +19,13 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Length(min = 2,max = 255)
     private String nameEn;
 
+    @Length(min = 2,max = 255)
     private String nameRu;
 
+    @Length(min = 2,max = 255)
     private String nameArm;
 
     @JsonIgnore

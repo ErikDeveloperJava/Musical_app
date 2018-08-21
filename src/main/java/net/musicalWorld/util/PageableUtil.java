@@ -7,7 +7,7 @@ public class PageableUtil {
 
     public static Pageable getChecked(Pageable pageable,int length){
         if(pageable.getPageNumber() >= length){
-            return PageRequest.of(length - 1,pageable.getPageSize());
+            return PageRequest.of(length == 0 ? length : length - 1,pageable.getPageSize());
         }else {
             return pageable;
         }
@@ -15,7 +15,9 @@ public class PageableUtil {
 
     public static int getLength(int count,int pageSize){
         int length;
-        if(count % pageSize != 0 ){
+        if(count < pageSize){
+            length = 1;
+        }else if(count % pageSize != 0 ){
             length = (count/pageSize) + 1;
         }else {
             length = count/pageSize;

@@ -15,4 +15,10 @@ public interface NewsService {
     int count();
 
     void deleteById(int id);
+
+    News getById(int id);
+
+    boolean existsById(int id);
+
+    List<News> getTop5AndUnlessId(int id);
 }

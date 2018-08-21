@@ -40,7 +40,7 @@
 <header class="top-bar" style="height: 45px">
     <div th:if="${#strings.equals(user.role,'USER')}"
          class="full-width-info left">
-        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + ' ' + ${user.surname} + './'">name surname /</span>
+        <img width="30px" height="30px" th:src="@{/resources/images/users/{img}(img = ${user.imgUrl})}"><span th:text="${user.name} + './'">name surname /</span>
         <a id="bookmarks" th:href="@{/user/bookmarks}" th:text="#{bookmarks}">bookmarks</a>
     </div>
     <div class="full-width-info right">
@@ -88,7 +88,7 @@
     <a href="/"><img th:src="@{/resources/images/logo.png}" alt="Logo"></a>
     <div class="event-counter bbox-countdown-timer">
 
-        <form th:action="@{/music/search}" role="search" method="post" class="search-form">
+        <form th:action="@{/music/search}" role="search" class="search-form">
             <input type="submit" value="" class="search-submit">
             <input type="search" name="name" class="search-text" th:placeholder="#{search.placeholder}"
                    autocomplete="off">
@@ -199,12 +199,7 @@
                             </ul>
                         </div>
                         <div  class="arrow-links-wrap">
-                            <a style="width: 30px;cursor: pointer;position: relative;top: 20px"  class="arrow-left-link prev">
-                                <img  th:src="@{/resources/icons/previous.png}">
-                            </a>
-                            <a style="width: 30px;cursor: pointer;position: relative;top: 20px"  class="arrow-right-link next">
-                                <img th:src="@{/resources/icons/next.png}">
-                            </a>
+
                         </div>
                     </div>
 
@@ -292,7 +287,7 @@
                             <ul class="news-list">
                                 <th:block th:each="musician : ${main.musicianList}">
                                     <li>
-                                        <a href="index.html#" class="image-wrap">
+                                        <a th:href="@{/musician/{id}(id = ${musician.id})}" class="image-wrap">
                                             <img height="50px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}"
                                                  alt="demo image">
                                             <span class="image-details"></span>
@@ -319,7 +314,7 @@
                             <ul class="news-list">
                                 <th:block th:each="album : ${main.albumList}">
                                     <li>
-                                        <a href="index.html#" class="image-wrap">
+                                        <a th:href="@{/album/{id}(id = ${album.id})}" class="image-wrap">
                                             <img height="50px" th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
                                                  alt="demo image">
                                             <span class="image-details"></span>
@@ -359,16 +354,18 @@
                             <div style="width: 298px" class="gumm-audio-player" data-play-pause-button-mode="toggle"
                                  th:data-src="'/resources/music/' + ${music.mp3}">
                                 <div class="details">
-                                    <h4 th:text="${music.name}">Name</h4>
+                                    <h4 th:if="${#strings.length(music.name)< 35}" th:text="${music.name}">Name</h4>
+                                    <h4 th:if="${#strings.length(music.name) >= 35}" th:text="${#strings.substring(music.name,0,34)} + '..'">Name</h4>
                                     <div class="track-progress-bar">
-                                        <a style="position: relative;left: 200px;top: -40px" download th:href="@{/resources/music/{music}(music =${music.mp3})}">
-                                            <img th:src="@{/resources/icons/download.png}">
-                                        </a>
                                         <a href="index.html#" class="track-progress">
                                             <span style="width:0%"></span>
                                         </a>
                                     </div>
                                 </div>
+                                <a style="position:relative;left: 210px;top: -58px;" download th:href="@{/resources/music/{url}(url = ${music.mp3})}">
+                                    <img th:src="@{/resources/icons/download.png}">
+                                </a>
+
                                 <a class="button button-play" href="index.html#">
                                     <span><i class="icon-play"></i></span>
                                     <span><i class="icon-play"></i></span>
@@ -389,16 +386,21 @@
 
                     <div class="audio-tracks-wrap gumm-audio-tracks-widget">
                         <th:block th:each="music : ${main.newMusicList}">
-                            <div class="gumm-audio-player" data-play-pause-button-mode="toggle"
+                            <div style="width: 298px" class="gumm-audio-player" data-play-pause-button-mode="toggle"
                                  th:data-src="'/resources/music/' + ${music.mp3}">
                                 <div class="details">
-                                    <h4 th:text="${music.name}">Name</h4>
+                                    <h4 th:if="${#strings.length(music.name) < 35}" th:text="${music.name}">Name</h4>
+                                    <h4 th:if="${#strings.length(music.name) >= 35}" th:text="${#strings.substring(music.name,0,34)} + '..'">Name</h4>
                                     <div class="track-progress-bar">
                                         <a href="index.html#" class="track-progress">
                                             <span style="width:0%"></span>
                                         </a>
                                     </div>
                                 </div>
+
+                                <a style="position:relative;left: 210px;top: -58px;" download th:href="@{/resources/music/{url}(url = ${music.mp3})}">
+                                    <img th:src="@{/resources/icons/download.png}">
+                                </a>
                                 <a class="button button-play" href="index.html#">
                                     <span><i class="icon-play"></i></span>
                                     <span><i class="icon-play"></i></span>

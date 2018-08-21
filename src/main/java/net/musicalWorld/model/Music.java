@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @ToString(exclude = {"albums","categories","users"})
+@EqualsAndHashCode(exclude = {"albums","categories","users"})
 public class Music {
 
     @Id
@@ -24,11 +25,13 @@ public class Music {
     private int year;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "musicList")
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "album_music",joinColumns = @JoinColumn(name = "music_id"),
+            inverseJoinColumns = @JoinColumn(name = "album_id"))
     private List<Album> albums;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "category_music",joinColumns = @JoinColumn(name = "music_id"),
     inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;

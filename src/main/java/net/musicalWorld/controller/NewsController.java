@@ -75,4 +75,20 @@ public class NewsController implements Pages {
         return true;
     }
 
+    @GetMapping("/news/{id}")
+    public String oneNews(@PathVariable("id")String strId,Model model){
+        LOGGER.debug("newsId : {}",strId);
+        int id;
+        try {
+            if (!newsService.existsById((id = Integer.parseInt(strId)))) {
+                return "redirect:/news";
+            }
+            model.addAttribute("news",newsService.getById(id));
+            model.addAttribute("likeNews",newsService.getTop5AndUnlessId(id));
+        }catch (NumberFormatException e){
+            return "redirect:/news";
+        }
+        return NEWS_DETAIL;
+    }
+
 }

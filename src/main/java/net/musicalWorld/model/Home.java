@@ -16,7 +16,7 @@ public class Home {
 
     private String homeImg;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "home_mp3_id")
     private Music music;
 

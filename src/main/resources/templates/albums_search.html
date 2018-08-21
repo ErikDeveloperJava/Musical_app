@@ -1,0 +1,100 @@
+<div style="position: relative;top: -30px" xmlns:th="http://www.thymeleaf.org">
+    <form id="search-form"  th:action="@{/album/search}" role="search" method="post"
+          class="search-form">
+        <input type="submit" value="" class="search-submit">
+        <input type="search" id="name" name="name" class="search-text" th:placeholder="#{album.search} + '...'"
+               autocomplete="off">
+    </form>
+</div>
+<div class="row" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- BEGIN content -->
+
+    <div class="col-md-12" th:if="${#lists.size(albums) > 0}">
+        <content>
+
+            <div class="row content-row">
+                <th:block th:each="album : ${albums}" th:if="${albumStat.index < 3}">
+                    <div class="col-md-4">
+                        <a th:if="${#strings.equals(user.role,'ADMIN')}" class="delete-album"
+                           th:id="${album.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px"
+                                 th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                 alt="demo image">
+                            <div class="album-caption">
+                                <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                                    <a style="cursor: pointer" th:text="${album.name}">Name</a>
+                                </h4>
+                                <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                                    <a th:href="@{/album/{id}(id = ${album.id})}" th:text="${album.name}">Name</a>
+                                </h4>
+                                <span th:text="${album.musician.name} + ' ' + ${album.musician.surname}">musician</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="row content-row">
+                <th:block th:each="album : ${albums}" th:if="${albumStat.index >= 3}">
+                    <div class="col-md-4">
+                        <a th:if="${#strings.equals(user.role,'ADMIN')}" class="delete-album"
+                           th:id="${album.id}"
+                           style="cursor: pointer;position: relative;left: 268px;top: 15px">
+                            <img th:src="@{/resources/icons/delete.png}">
+                        </a>
+                        <div class="album-wrap">
+                            <img height="200px"
+                                 th:src="@{/resources/images/albums/{img}(img = ${album.imgUrl})}"
+                                 alt="demo image">
+                            <div class="album-caption">
+                                <h4 th:if="${#strings.equals(user.role,'ADMIN')}">
+                                    <a style="cursor: pointer" th:text="${album.name}">Name</a>
+                                </h4>
+                                <h4 th:unless="${#strings.equals(user.role,'ADMIN')}">
+                                    <a th:href="@{/album/{id}(id = ${album.id})}" th:text="${album.name}">Name</a>
+                                </h4>
+                                <span th:text="${album.musician.name} + ' ' + ${album.musician.surname}">musician</span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+        </content>
+
+    </div>
+
+    <h2 th:if="${#lists.isEmpty(albums)}" style="color: red" align="center" th:text="#{search.empty}"></h2>
+</div>
+<span class="clear"></span>
+
+<nav data-pagination style="position:relative;top: 40px" xmlns:th="http://www.thymeleaf.org" th:if="${#lists.size(albums) > 0}">
+    <a th:if="${pageNumber eq 0}" disabled>
+        <img th:src="@{/resources/icons/pagination-previous.png}">
+    </a>
+    <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber},name = ${name})}">
+        <img th:src="@{/resources/icons/pagination-previous.png}">
+    </a>
+    <ul>
+        <th:block th:each="i : ${#numbers.sequence(1,length)}">
+            <li th:if="${(i-1)} ne ${pageNumber}">
+                <a th:href="@{${#request.getRequestURI()}(page = ${i},name = ${name})}" th:text="${i}">2</a>
+            </li>
+            <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                <a th:text="${i}">2</a>
+            </li>
+        </th:block>
+    </ul>
+    <a th:if="${pageNumber} eq ${length - 1}" disabled>
+        <img th:src="@{/resources/icons/pagination-next.png}">
+    </a>
+    <a th:if="${pageNumber} ne ${length - 1}"
+       th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2},name = ${name})}">
+        <img th:src="@{/resources/icons/pagination-next.png}">
+    </a>
+</nav>

@@ -50,15 +50,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/","/home","/news","/musicians")
+                .antMatchers("/","/home","/news","/musicians",
+                        "/categories","/music")
                 .permitAll()
                 .antMatchers("/login","/register")
                 .anonymous()
                 .antMatchers("/admin","/admin/**")
                 .hasAuthority(UserRole.ADMIN.name())
-                .antMatchers("/categories")
+                .antMatchers("/news/*","/musician/*","/comments","/album/*",
+                        "/musician/search","/album/search","/music/search")
                 .hasAnyAuthority(UserRole.USER.name(),UserRole.ROLE_ANONYMOUS.name())
-                .antMatchers("/user/bookmarks","/user/bookmarks/count")
+                .antMatchers("/user/bookmarks","/user/bookmarks/count","/comment/add")
                 .hasAuthority(UserRole.USER.name())
         .and()
                 .formLogin()

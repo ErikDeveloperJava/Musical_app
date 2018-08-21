@@ -15,4 +15,8 @@ public interface MusicianRepository extends JpaRepository<Musician,Integer> {
 
     @Query("select m from Musician m where :albumId member m.albums")
     Musician findByAlbumId(@Param("albumId") int albumId);
+
+    List<Musician> findAllByNameContains(String name,Pageable pageable);
+
+    int countByNameContains(String name);
 }

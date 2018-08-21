@@ -29,4 +29,30 @@ public interface Pages {
     String ALBUMS = "albums";
 
     String ALBUMS_JS = "albums_js";
+
+    String NEWS_DETAIL = "news_detail";
+
+    String MUSICIAN_DETAIL = "musician_detail";
+
+    String ALBUM_DETAIL = "album_detail";
+
+    String MUSIC_ADD = "admin/music_add";
+
+    String ALL_MUSIC = "music";
+
+    String ALL_MUSIC_JS = "music_js";
+
+    String ALBUM_SEARCH = "albums_search";
+
+    String MUSICIAN_SEARCH = "musicians_search";
+
+    String BOOKMARK = "bookmark";
+
+    String MUSIC_SEARCH = "music_search";
+
+    String MUSIC_CATEGORY = "music_category";
+
+    String CHANGE_MAIN_PAGE = "admin/change_main_page";
+
+    String CATEGORY_ADD = "admin/category_add";
 }

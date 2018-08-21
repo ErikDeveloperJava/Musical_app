@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,9 +13,11 @@ import java.io.IOException;
 @Component
 public class FileUtil {
 
+    private static final String[] REQUIRED_FILES = {"users","musicians","albums","news"};
+
     private Environment environment;
     private String[] imageFormats;
-    private String musicFormat;
+    private String[] musicFormat;
     private String rootImagePath;
     private String rootMusicPath;
 
@@ -22,9 +25,30 @@ public class FileUtil {
     public FileUtil(Environment environment) {
         this.environment = environment;
         this.imageFormats = new String[]{"image/jpeg","image/png"};
-        this.musicFormat = "audio/mp4";
+        this.musicFormat = new String[]{"audio/mp4","audio/mp3"};
         this.rootImagePath  = environment.getProperty("root.image.path");
         this.rootMusicPath  = environment.getProperty("root.music.path");
+    }
+
+    @PostConstruct
+    public void init(){
+        File file = new File(rootImagePath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        for (String fileName : REQUIRED_FILES) {
+            createFile(new File(rootImagePath,fileName));
+        }
+        file = new File(rootMusicPath);
+        if(!file.exists()){
+            file.mkdir();
+        }
+    }
+
+    private void createFile(File file){
+        if(!file.exists()){
+            file.mkdir();
+        }
     }
 
     public boolean isValidImgFormat(String format){
@@ -37,15 +61,25 @@ public class FileUtil {
     }
 
     public boolean isValidMusicFormat(String format){
-        return musicFormat.equals(format);
+        for (String musicFormat : musicFormat) {
+            if(musicFormat.equals(format)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void saveImage(String parent,String img,byte[] bytes){
-        File file = new File(rootImagePath,parent);
-        if(!file.exists()){
-            if(!file.mkdir()){
-                throw new RuntimeException(file + " failed created");
+        File file;
+        if(!parent.equals("")){
+            file = new File(rootImagePath,parent);
+            if(!file.exists()){
+                if(!file.mkdir()){
+                    throw new RuntimeException(file + " failed created");
+                }
             }
+        }else {
+            file = new File(rootImagePath);
         }
         try {
             @Cleanup FileOutputStream out = new FileOutputStream(new File(file,img));

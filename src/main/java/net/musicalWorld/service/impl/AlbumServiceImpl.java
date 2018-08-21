@@ -2,6 +2,7 @@ package net.musicalWorld.service.impl;
 
 import net.musicalWorld.model.Album;
 import net.musicalWorld.model.Music;
+import net.musicalWorld.page.AlbumDetail;
 import net.musicalWorld.repository.AlbumRepository;
 import net.musicalWorld.repository.MusicRepository;
 import net.musicalWorld.service.AlbumService;
@@ -64,5 +65,35 @@ public class AlbumServiceImpl implements AlbumService {
         albumRepository.deleteById(id);
         fileUtil.deleteImg("albums\\" + id);
         LOGGER.debug("album deleted");
+    }
+
+    @Override
+    public AlbumDetail getDetailById(int id) {
+        Album album = albumRepository.findById(id).get();
+        return AlbumDetail.builder()
+                .album(album)
+                .albums(albumRepository.findTop4ByMusicianIdAndIdNotIn(album.getMusician().getId(),album.getId()))
+                .musicList(musicRepository.findAllByAlbumId(album.getId()))
+                .build();
+    }
+
+    @Override
+    public boolean existsById(int id) {
+        return albumRepository.existsById(id);
+    }
+
+    @Override
+    public List<Album> getAll() {
+        return albumRepository.findAll();
+    }
+
+    @Override
+    public List<Album> getAllByNameContains(String name, Pageable pageable) {
+        return albumRepository.findAllByNameContains(name,PageRequest.of(pageable.getPageNumber(),6));
+    }
+
+    @Override
+    public int countByNameContains(String name) {
+        return albumRepository.countByNameContains(name);
     }
 }

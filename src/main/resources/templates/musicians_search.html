@@ -1,0 +1,92 @@
+<div xmlns:th="http://www.thymeleaf.org" th:if="${#lists.size(musicians) > 0}">
+    <div style="position: relative;top: -30px">
+        <form th:action="@{/musician/search}" role="search" method="post"
+              id="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" id="name" name="name" class="search-text" th:placeholder="#{search.musician} + '...'"
+                   autocomplete="off">
+        </form>
+    </div>
+    <div class="row">
+
+        <!-- BEGIN content -->
+
+        <div class="col-md-12">
+            <content>
+
+                <div class="row content-row">
+                    <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index < 3}">
+                        <div class="col-md-4">
+                            <div class="album-wrap">
+                                <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                                <div class="album-caption">
+                                    <h4>
+                                        <a th:href="@{/musician/{id}(id = ${musician.id})}" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                    </h4>
+                                    <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
+                <div class="row content-row">
+
+                    <th:block th:each="musician : ${musicians}" th:if="${musicianStat.index >= 3}">
+                        <div class="col-md-4">
+                            <div class="album-wrap">
+                                <img height="200px" th:src="@{/resources/images/musicians/{img}(img = ${musician.imgUrl})}" alt="demo image">
+                                <div class="album-caption">
+                                    <h4>
+                                        <a th:href="@{/musician/{id}(id = ${musician.id})}" th:text="${musician.name} + ' ' + ${musician.surname}">Name Surname</a>
+                                    </h4>
+                                    <span th:text="${#dates.format(musician.birthDate,'dd.MM.yyyy')}">Date</span>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
+            </content>
+
+        </div>
+
+    </div>
+    <span class="clear"></span>
+
+    <nav data-pagination style="position:relative;top: 40px">
+        <a th:if="${pageNumber eq 0}" disabled>
+            <img th:src="@{/resources/icons/pagination-previous.png}">
+        </a>
+        <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber},name=${name})}" >
+            <img th:src="@{/resources/icons/pagination-previous.png}">
+        </a>
+        <ul>
+            <th:block th:each="i : ${#numbers.sequence(1,length)}">
+                <li th:if="${(i-1)} ne ${pageNumber}">
+                    <a th:href="@{${#request.getRequestURI()}(page = ${i},name=${name})}" th:text="${i}">2</a>
+                </li>
+                <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                    <a  th:text="${i}">2</a>
+                </li>
+            </th:block>
+        </ul>
+        <a th:if="${pageNumber} eq ${length - 1}" disabled>
+            <img th:src="@{/resources/icons/pagination-next.png}">
+        </a>
+        <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2},name=${name})}">
+            <img th:src="@{/resources/icons/pagination-next.png}">
+        </a>
+    </nav>
+</div>
+<div xmlns:th="http://www.thymeleaf.org" th:if="${#lists.size(musicians) == 0}">
+    <div style="position: relative;top: -30px">
+        <form th:action="@{/musician/search}" role="search" method="post"
+              id="search-form">
+            <input type="submit" value="" class="search-submit">
+            <input type="search" id="name" name="name" class="search-text" th:placeholder="#{search.musician} + '...'"
+                   autocomplete="off">
+        </form>
+    </div>
+    <h2 align="center" style="color: red" th:text="#{search.empty}">search empty</h2>
+</div>

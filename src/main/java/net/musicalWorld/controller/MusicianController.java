@@ -69,6 +69,19 @@ public class MusicianController implements Pages {
         return token.equals("NONE") ? MUSICIANS : MUSICIAN_JS;
     }
 
+    @GetMapping("/musician/search")
+    public String musicianSearch(Pageable pageable,Model model,
+                           @RequestParam(value = "name")String name){
+        int count = musicianService.countByNameContains(name);
+        int length = PageableUtil.getLength(count, 6);
+        pageable = PageableUtil.getChecked(pageable,length);
+        model.addAttribute("musicians",musicianService.getAllByNameContains(name,pageable));
+        model.addAttribute("length",length);
+        model.addAttribute("pageNumber",pageable.getPageNumber());
+        model.addAttribute("name",name);
+        return MUSICIAN_SEARCH;
+    }
+
     @PostMapping("/admin/musician/delete/{id}")
     public @ResponseBody
     boolean delete(@PathVariable("id")int id){
@@ -81,5 +94,20 @@ public class MusicianController implements Pages {
     public @ResponseBody
     List<Musician> loadMusicians(){
         return musicianService.getAll();
+    }
+
+    @GetMapping("/musician/{id}")
+    public String oneMusician(@PathVariable("id")String strId,Model model){
+        LOGGER.debug("musicianId : {}",strId);
+        int id;
+        try {
+            if(!musicianService.existsById((id = Integer.parseInt(strId)))){
+                return "redirect:/musicians";
+            }
+            model.addAttribute("musician",musicianService.getDetailById(id));
+        }catch (NumberFormatException e){
+            return "redirect:/musicians";
+        }
+        return MUSICIAN_DETAIL;
     }
 }

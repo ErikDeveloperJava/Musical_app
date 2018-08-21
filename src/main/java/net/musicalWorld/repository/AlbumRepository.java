@@ -15,4 +15,10 @@ public interface AlbumRepository extends JpaRepository<Album,Integer> {
 
     @Query("select a from Album a where a.musician.id = :musicianId")
     List<Album> findAllByMusicianId(@Param("musicianId") int musicianId);
+
+    List<Album> findTop4ByMusicianIdAndIdNotIn(int musicianId,int id);
+
+    List<Album> findAllByNameContains(String name,Pageable pageable);
+
+    int countByNameContains(String name);
 }

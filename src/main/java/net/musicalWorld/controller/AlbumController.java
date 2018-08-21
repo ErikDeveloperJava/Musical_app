@@ -18,6 +18,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class AlbumController implements Pages {
@@ -34,6 +35,12 @@ public class AlbumController implements Pages {
     public String addGet(Model model){
         model.addAttribute("form",new AlbumRequestForm());
         return ALBUM_ADD;
+    }
+
+    @PostMapping("/admin/albums")
+    public @ResponseBody
+    List<Album> loadAlbums(){
+        return albumService.getAll();
     }
 
     @PostMapping("/admin/album/add")
@@ -69,11 +76,40 @@ public class AlbumController implements Pages {
         return token.equals("NONE") ? ALBUMS : ALBUMS_JS;
     }
 
+
+    @GetMapping("/album/search")
+    public String albumSearch(Pageable pageable, Model model,
+                         @RequestParam("name")String name){
+        int count = albumService.countByNameContains(name);
+        int length = PageableUtil.getLength(count,6);
+        pageable = PageableUtil.getChecked(pageable,length);
+        model.addAttribute("albums",albumService.getAllByNameContains(name,pageable));
+        model.addAttribute("pageNumber",pageable.getPageNumber());
+        model.addAttribute("length",length);
+        model.addAttribute("name",name);
+        return ALBUM_SEARCH;
+    }
+
     @PostMapping("/admin/album/delete/{id}")
     public @ResponseBody
     boolean delete(@PathVariable("id")int id){
         LOGGER.debug("albumId : {}",id);
         albumService.deleteById(id);
         return true;
+    }
+
+    @GetMapping("/album/{id}")
+    public String oneAlbum(@PathVariable("id")String strId,Model model){
+        LOGGER.debug("albumId : {}",strId);
+        int id;
+        try {
+            if(!albumService.existsById((id = Integer.parseInt(strId)))){
+                return "redirect:/albums";
+            }
+            model.addAttribute("album",albumService.getDetailById(id));
+        }catch (NumberFormatException e){
+            return "redirect:/albums";
+        }
+        return ALBUM_DETAIL;
     }
 }

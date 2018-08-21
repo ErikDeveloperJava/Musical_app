@@ -8,4 +8,6 @@ public interface MainService {
     Main getMainData();
 
     Home getHome();
+
+    void changeMusic(int musicId);
 }

@@ -1,0 +1,93 @@
+<div xmlns:th="http://www.thymeleaf.org" th:object="${allMusic}">
+    <content>
+        <form>
+            <input type="hidden" id="frsc_" th:value="${_csrf.token}">
+        </form>
+
+        <div class="audio-tracks-wrap audio-page" th:if="*{#lists.size(musicList) > 0}">
+
+            <th:block th:each="music : *{musicList}">
+
+                <div  class="gumm-audio-player" data-play-pause-button-mode="toggle"
+                      th:data-src="'/resources/music/' + ${music.mp3}">
+                    <div class="details">
+                        <h4 th:text="${music.name}">Name</h4>
+                        <div class="track-progress-bar">
+                            <a href="index.html#" class="track-progress">
+                                <span style="width:0%"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="buttons-wrap">
+                        <a th:unless="${#strings.equals(user.role,'ADMIN')}" download th:href="@{/resources/music/{url}(url = ${music.mp3})}">
+                            <img th:src="@{/resources/icons/download.png}">
+                        </a>
+                        <a th:if="${#strings.equals(user.role,'USER')}"
+                           style="cursor: pointer" class="bookmark" th:id="${music.id}" th:text="#{add.bookmark}">
+                        </a>
+                        <a th:if="${#strings.equals(user.role,'ADMIN')}"
+                           style="cursor: pointer" class="make-main-music" th:id="${music.id} + '-m'" th:text="#{make.main.music}">
+                        </a>
+                        <a th:if="${#strings.equals(user.role,'ADMIN')}"
+                           style="cursor: pointer" class="delete-music" th:id="${music.id} + '-d'" th:text="#{delete}">
+                        </a>
+                    </div>
+                    <a class="button button-play" href="index.html#">
+                        <span><i class="icon-play"></i></span>
+                        <span><i class="icon-play"></i></span>
+                    </a>
+                </div>
+            </th:block>
+        </div>
+    </content>
+    <nav  data-pagination th:if="*{#lists.size(musicList) > 0}">
+        <a th:if="${pageNumber eq 0}" disabled>
+            <img th:src="@{/resources/icons/pagination-previous.png}">
+        </a>
+        <th:block th:if="${font ne null}">
+            <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber},font=${font})}" >
+                <img th:src="@{/resources/icons/pagination-previous.png}">
+            </a>
+        </th:block>
+        <th:block th:unless="${font ne null}">
+            <a th:if="${pageNumber ne 0}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber})}" >
+                <img th:src="@{/resources/icons/pagination-previous.png}">
+            </a>
+        </th:block>
+
+        <ul>
+            <th:block th:each="i : ${#numbers.sequence(1,length)}">
+                <th:block th:if="${font ne null}">
+                    <li th:if="${(i-1)} ne ${pageNumber}">
+                        <a th:href="@{${#request.getRequestURI()}(page = ${i},font=${font})}" th:text="${i}">2</a>
+                    </li>
+                </th:block>
+                <th:block th:unless="${font ne null}">
+                    <li th:if="${(i-1)} ne ${pageNumber}">
+                        <a th:href="@{${#request.getRequestURI()}(page = ${i})}" th:text="${i}">2</a>
+                    </li>
+                </th:block>
+                <li class="current" th:if="${(i-1)} eq ${pageNumber}">
+                    <a  th:text="${i}">2</a>
+                </li>
+            </th:block>
+        </ul>
+        <a th:if="${pageNumber} eq ${length - 1}" disabled>
+            <img th:src="@{/resources/icons/pagination-next.png}">
+        </a>
+        <th:block th:if="${font ne null}">
+            <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2},font=${font})}">
+                <img th:src="@{/resources/icons/pagination-next.png}">
+            </a>
+        </th:block>
+        <th:block th:unless="${font ne null}">
+            <a th:if="${pageNumber} ne ${length - 1}" th:href="@{${#request.getRequestURI()}(page = ${pageNumber + 2})}">
+                <img th:src="@{/resources/icons/pagination-next.png}">
+            </a>
+        </th:block>
+    </nav>
+
+    <div class="audio-tracks-wrap audio-page" th:if="*{#lists.isEmpty(musicList)}">
+        <h2 align="center" style="color: red" th:text="#{search.empty}">Search empty</h2>
+    </div>
+</div>

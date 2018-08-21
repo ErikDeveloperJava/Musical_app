@@ -18,9 +18,9 @@ function loadCategories(token, lang, catId) {
             $.each(data, function (i, category) {
                 var name;
                 var liTag;
-                if (lang === "en") {
+                if (lang == "en") {
                     name = category.nameEn;
-                }else if(lang === "ru"){
+                }else if(lang == "ru"){
                     name = category.nameRu;
                 }else {
                     name = category.nameArm;
@@ -44,11 +44,11 @@ function loadHome(token) {
         url: "/home",
         data: {_csrf : token},
         success: function (data) {
-            $("#body").css("background-image","url(/resources/images/" + data.homeImg + ")");
+            $("#body").css("background-image","url(/resources/images/home.jpg)");
             $("#body").css("background-repeat","no-repeat");
             $("#body").css("background-position","top center");
             $("#body").css("background-attachment","fixed");
-            $("#musician-img").attr("src","/resources/images/musicians/" + data.musician.imgUrl);
+            $("#musician-img").attr("src","/resources/images/musician.jpg");
         },
         error: function () {
             window.location = "/error";

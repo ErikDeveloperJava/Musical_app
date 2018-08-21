@@ -1,5 +1,6 @@
 package net.musicalWorld.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
@@ -26,12 +27,12 @@ public class Album {
 
     private String imgUrl;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "musician_id")
     private Musician musician;
 
-    @ManyToMany
-    @JoinTable(name = "album_music",joinColumns = @JoinColumn(name = "album_id"),
-    inverseJoinColumns = @JoinColumn(name = "music_id"))
+    @JsonIgnore
+    @ManyToMany(mappedBy = "albums")
     private List<Music> musicList;
 }
